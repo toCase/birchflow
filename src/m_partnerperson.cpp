@@ -1,7 +1,7 @@
 #include "m_partnerperson.h"
 
-ModelPartnerPerson::ModelPartnerPerson(DatabaseWorker *dbw, QObject *parent)
-    : dbWorker(dbw), QAbstractListModel{parent}
+ModelPartnerPerson::ModelPartnerPerson(DatabaseWorker *dbw, NotificationManager *nm, QObject *parent)
+    : dbWorker(dbw), m_notification(nm), QAbstractListModel{parent}
 {}
 
 int ModelPartnerPerson::getPosition(int id)
@@ -69,9 +69,7 @@ void ModelPartnerPerson::setPartnerID(int id)
 {
     PARTNER_ID = id;
     beginResetModel();
-    QVariantMap filter;
-    filter.insert("partner_id", PARTNER_ID);
-    DATA = dbWorker->getData(Tables::PARTNERS_PERSON, filter);
+    DATA = dbWorker->getData(Tables::PARTNERS_PERSON, QVariantMap{{"partner_id", PARTNER_ID}});
     endResetModel();
 }
 
@@ -95,8 +93,9 @@ QVariantMap ModelPartnerPerson::save(QVariantMap card)
             DATA[pos] = card;
             emit dataChanged(index(pos), index(pos));
         }
+        m_notification->makeNote("Saved success", Notes::SUCCESS);
     } else {
-        qDebug() << res.value("err").toString();
+        m_notification->makeNote(res.value("err").toString(), Notes::ERROR);
     }
     return res;
 }
@@ -113,6 +112,10 @@ bool ModelPartnerPerson::del(int id)
         beginRemoveRows(QModelIndex(), pos, pos);
         DATA.removeOne(pos);
         endRemoveRows();
+        m_notification->makeNote("Deleted successfull", Notes::SUCCESS);
+    } else {
+        m_notification->makeNote("Unknown error while deleting, sorry", Notes::ERROR);
     }
+
     return res;
 }

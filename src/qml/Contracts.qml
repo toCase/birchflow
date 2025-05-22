@@ -14,6 +14,7 @@ Item {
             PropertyChanges {}
             StateChangeScript {
                 script: {
+                    modelContracts.load();
                     stack.pop();
                     stack.push(contracts_list);
                 }

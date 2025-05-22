@@ -40,11 +40,11 @@ QList<QVariantMap> ServiceManager::generateArchive(const QVariantMap &card)
     m_filemanager->makeArchiveDir(0);
 
     //contract_file
-    m_filemanager->copyAchiveFile(card.value("uuid").toString(), "contract");
+    if (!card.value("file").toString().isEmpty()) m_filemanager->copyAchiveFile(card.value("uuid").toString(), "contract");
 
     QVariantMap report;
     report.insert("doc", -1);
-    report.insert("file", "contract." + card.value("file").toString());
+    report.insert("file", card.value("file").toString().isEmpty() ? "NOT FILE" : "contract." + card.value("file").toString());
     report.insert("date", QDate::fromJulianDay(card.value("c_date").toInt()).toString(m_setting->getValue("dateFormat").toString()));
     report.insert("desc", card.value("description").toString());
     res.append(report);

@@ -48,5 +48,10 @@ public:
     double getSumPay(int type_id, int contract_id);
 
     QStringList getContractUuids(int contract_id);
+    QStringList getPartnerUuids(int partner_id);
+
+    QVariantMap getDashData(const QString& ids, const QVariantMap& filter = QVariantMap());
+    double getPaymentSum(int from, int to, int doc_type, int currency, int contract_type);
+    QList<QVariantMap> getPaymentCurrency(int c_date, int doc_type);
 
 };

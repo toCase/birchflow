@@ -7,7 +7,9 @@ import "../controls"
 
 Item {
 
-    id: partner_form_edit
+    id: root
+
+    signal deleted()
 
     property int partner_id: 0
 
@@ -20,7 +22,7 @@ Item {
         cfe_raddress.text = card.real_address
         cfe_url.text = card.url
         cfe_note.text = card.note
-        // cfe_created.text = card.created
+        but_del.enabled = card.contracts === 0
     }
 
     QtObject {
@@ -28,7 +30,7 @@ Item {
 
         function save(){
             let card = {}
-            card.id = partner_form_edit.partner_id
+            card.id = root.partner_id
             card.code = cfe_code.text
             card.name = cfe_sname.text
             card.full_name = cfe_fname.text
@@ -45,134 +47,133 @@ Item {
         }
     }
 
-    ColumnLayout {
+
+    ScrollView {
+        id: scrollView
         anchors.fill: parent
-        anchors.leftMargin: parent.width * .2
-        anchors.rightMargin: parent.width * .2
 
-        spacing: 30
+        ColumnLayout {
+            width: scrollView.width * 0.6
+            x: scrollView.width * 0.2
+            spacing: 30
 
-        Label {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 60
-
-            text: "Partner details: "
-            font.pixelSize: Qt.application.font.pixelSize * 1.5
-            font.bold: true
-            font.italic: true
-            color: Const.CLR_YELLOW
-            verticalAlignment: Qt.AlignVCenter
-        }
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 2
-
-            color: Const.CLR_YELLOW
-        }
-
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 40
-
-            spacing: 40
-
-            TextField {
-                id: cfe_code
-                Layout.preferredWidth: 300
-                Layout.fillHeight: true
-                placeholderText: "Reg Code: "
-
-            }
-
-            TextField {
-                id: cfe_sname
+            Label {
                 Layout.fillWidth: true
-                Layout.fillHeight: true
-                placeholderText: "Short Name: "
-
+                Layout.preferredHeight: 60
+                text: qsTr("Partner`s information: ")
+                font.pixelSize: Qt.application.font.pixelSize * 1.5
+                font.bold: true
+                font.italic: true
+                color: Const.CLR_YELLOW
+                verticalAlignment: Qt.AlignVCenter
             }
-        }
 
-        TextField {
-            id: cfe_fname
-            Layout.fillWidth: true
-            Layout.preferredHeight: 40
-            placeholderText: "Full Name: "
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 2
+                color: Const.CLR_YELLOW
+            }
 
-        }
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+                spacing: 40
 
-        TextField {
-            id: cfe_oaddress
-            Layout.fillWidth: true
-            Layout.preferredHeight: 40
-            placeholderText: "Official address: "
+                TextField {
+                    id: cfe_code
+                    Layout.preferredWidth: 300
+                    Layout.fillHeight: true
+                    placeholderText: qsTr("Reg Code: ")
+                }
 
-        }
+                TextField {
+                    id: cfe_sname
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    placeholderText: qsTr("Short title: ")
+                }
+            }
 
-        TextField {
-            id: cfe_raddress
-            Layout.fillWidth: true
-            Layout.preferredHeight: 40
-            placeholderText: "Real address: "
+            TextField {
+                id: cfe_fname
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+                placeholderText: qsTr("Full title: ")
+            }
 
-        }
+            TextField {
+                id: cfe_oaddress
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+                placeholderText: qsTr("Official address: ")
+            }
 
-        TextField {
-            id: cfe_url
-            Layout.fillWidth: true
-            Layout.preferredHeight: 40
-            placeholderText: "URL: "
+            TextField {
+                id: cfe_raddress
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+                placeholderText: qsTr("Real address: ")
+            }
 
-        }
+            TextField {
+                id: cfe_url
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+                placeholderText: qsTr("URL: ")
+            }
 
-        TextField {
-            id: cfe_note
-            Layout.fillWidth: true
-            Layout.preferredHeight: 40
-            placeholderText: "Note: "
+            TextField {
+                id: cfe_note
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+                placeholderText: qsTr("Description: ")
+            }
 
-        }
-        Label {
-            id: cfe_created
-            Layout.preferredHeight: implicitHeight
-            Layout.fillWidth: true
+            Label {
+                id: cfe_created
+                Layout.preferredHeight: implicitHeight
+                Layout.fillWidth: true
+            }
 
-        }
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 44
+                spacing: 5
 
+                Button_DF {
+                    id: but_del
+                    Layout.preferredWidth: 100
+                    Layout.fillHeight: true
+                    text: qsTr("Delete")
+                    onClicked: del_dialog.open()
+                }
 
+                Item {
+                    Layout.fillWidth: true
+                }
 
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 44
-
-            spacing: 5
-            Button_DF {
-                Layout.preferredWidth: 100
-                Layout.fillHeight: true
-
-                text: "Delete"
-
-
-                onClicked: internal.del()
+                Button_DF {
+                    Layout.preferredWidth: 100
+                    Layout.fillHeight: true
+                    text: qsTr("Save")
+                    onClicked: internal.save()
+                }
             }
 
             Item {
-                Layout.fillWidth: true
+                Layout.preferredHeight: 20
             }
-            Button_DF {
-                Layout.preferredWidth: 100
-                Layout.fillHeight: true
-
-                text: "Save"
-
-                onClicked: internal.save()
-            }
-
         }
-        Item {
-            Layout.fillHeight: true
-            Layout.verticalStretchFactor: 1
+    }
+
+    AcceptDeleteDialog {
+        id: del_dialog
+        x: root.width * .2
+        y: root.width * .05
+
+        onAccepted: {
+            modelPartners.del(root.partner_id)
+            root.deleted()
         }
     }
 

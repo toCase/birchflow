@@ -34,7 +34,7 @@ public:
     Q_INVOKABLE QVariantList getTypeList() const {
         return QVariantList {
             QVariantMap{{"value", 1}, {"text", tr("Profitable")}},
-            QVariantMap{{"value", 2}, {"text", tr("Expense")}},
+            QVariantMap{{"value", 2}, {"text", tr("Consumable")}},
         };
     }
 

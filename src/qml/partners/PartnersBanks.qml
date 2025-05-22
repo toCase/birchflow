@@ -27,7 +27,6 @@ Item {
             bank_name.text = card.bank_name
             bank_code.text = card.bank_code
             bank_account.text = card.bank_account
-            bank_created.text = "Date at: " + card.created
 
             bank_form.open();
         }
@@ -37,7 +36,6 @@ Item {
             bank_name.clear()
             bank_code.clear()
             bank_account.clear()
-            bank_created.text = ""
 
             bank_form.open();
         }
@@ -55,7 +53,7 @@ Item {
         }
 
         function del(idx) {
-            let res = modelClientBank.del(idx)
+            let res = modelPartnerBank.del(idx)
             if (res.r) bank_del.close()
         }
     }
@@ -77,7 +75,7 @@ Item {
                 Layout.preferredWidth: partners_bank.width / 2
                 Layout.topMargin: 5
                 Layout.bottomMargin: 5
-                placeholderText: "filter..."
+                placeholderText: qsTr("filter by title, account, code...")
                 onTextChanged: modelProxyPartnerBank.setFilter(text)
             }
             Item {
@@ -87,7 +85,7 @@ Item {
                 Layout.fillHeight: true
                 Layout.preferredWidth: 80
 
-                text: "ADD"
+                text: qsTr("ADD")
                 onClicked: internal.add()
             }
         }
@@ -121,7 +119,7 @@ Item {
                     anchors.fill: parent
                     hoverEnabled: true
                     onHoveredChanged: {
-                        row.color = containsMouse ? "#4b5159" : Const.CLR_ROW
+                        row.color = containsMouse ? Const.CLR_YELLOW : Const.CLR_ROW
                     }
                     onClicked: internal.open(b_id)
                 }
@@ -164,14 +162,14 @@ Item {
                         Layout.preferredHeight: 44
                         Layout.preferredWidth: 44
 
-                        icon.source: "qrc:/qt/qml/DocFlow/img/trash"
+                        icon.source: "qrc:/qt/qml/BirchFlow/img/trash"
                         icon.width: 16
                         icon.height: 16
                         icon.color: Const.CLR_RED
 
                         onClicked: {
-                            bank_del.item_id = b_id
-                            bank_del.open()
+                            dia_del.m_id = b_id
+                            dia_del.open()
                         }
                     }
                 }
@@ -184,8 +182,8 @@ Item {
         x: partners_bank.width * .2
         y: partners_bank.width * .05
         width: partners_bank.width - (2 * (partners_bank.width * .2))
-        height: 350
-        title: "Bank"
+        height: 330
+        title: qsTr("Bank")
         contentItem: ColumnLayout {
             spacing: 8
             TextField {
@@ -193,7 +191,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
 
-                placeholderText: "Bank Name"
+                placeholderText: qsTr("Bank title")
             }
 
             TextField {
@@ -210,16 +208,6 @@ Item {
                 Layout.preferredHeight: 40
 
                 placeholderText: "IBAN"
-            }
-
-            Label {
-                id: bank_created
-
-                Layout.fillWidth: true
-                Layout.preferredHeight: implicitHeight
-
-                font.pixelSize: Qt.application.font.pixelSize * .8
-                font.italic: true
             }
         }
         footer: Item {
@@ -260,18 +248,11 @@ Item {
         }
     }
 
-    Dialog {
-        id: bank_del
+    AcceptDeleteDialog {
+        id: dia_del
         x: partners_bank.width * .2
         y: partners_bank.width * .05
-        width: partners_bank.width - (2 * (partners_bank.width * .2))
-        height: 150
-        title: "Delete"
-        standardButtons: Dialog.Ok | Dialog.Cancel
-        property int item_id: 0
-        contentItem: Label {
-            text: "Are you sure?"
-        }
-        onAccepted: internal.del(item_id)
+        onAccepted: internal.del(dia_del.m_id)
+
     }
 }

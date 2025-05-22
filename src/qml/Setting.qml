@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
-import QtQuick.Dialogs
+import Qt.labs.platform
 import QtCore
 
 import "const.js" as Const
@@ -18,7 +18,7 @@ Item {
         setting_dateB.checked = appSetting.getValue("dateFormat", "dd-MM-yyyy") === "MM-dd-yyyy"
         setting_dateC.checked = appSetting.getValue("dateFormat", "dd-MM-yyyy") === "dd-MM-yyyy"
         setting_dateD.checked = appSetting.getValue("dateFormat", "dd-MM-yyyy") === "dd/MM/yyyy"
-        setting_lang.currentIndex = appSetting.getValue("lang", 0);
+        setting_lang.currentIndex = setting_lang.find(appSetting.getValue("lang", "English"));
         setting_currency.currentIndex = appSetting.getValue("currency", 0);
 
         setting_archive_enable.checked = appSetting.getValue("archive_enable", true)
@@ -47,7 +47,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 90
                 header: Label {
-                    text: qsTr("Vault")
+                    text: qsTr("Default location for files")
                     font.pixelSize: Qt.application.font.pixelSize * 1.3
                 }
                 contentItem: ColumnLayout {
@@ -86,6 +86,7 @@ Item {
                         Layout.preferredHeight: 2
                         radius: 2
                         color: Const.CLR_YELLOW
+                        opacity: .3
                     }
                 }
             }
@@ -93,7 +94,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 90
                 header: Label {
-                    text: qsTr("Calculation pay amount")
+                    text: qsTr("Calculation of the amount")
                     font.pixelSize: Qt.application.font.pixelSize * 1.3
                 }
                 contentItem: ColumnLayout {
@@ -102,7 +103,7 @@ Item {
                         Layout.fillWidth: true
                         Layout.preferredHeight: implicitHeight
 
-                        text: qsTr("Выберите метод расчета суммы оплат по договору: платежи или счет со статусом оплачено")
+                        text: qsTr("Select the method for calculating the amount of payments under the contract: payments or an invoice with the status paid")
                         font.pixelSize: Qt.application.font.pixelSize * .9
                     }
                     RowLayout {
@@ -139,6 +140,7 @@ Item {
                         Layout.preferredHeight: 2
                         radius: 2
                         color: Const.CLR_YELLOW
+                        opacity: .3
                     }
                 }
             }
@@ -155,7 +157,7 @@ Item {
                         Layout.fillWidth: true
                         Layout.preferredHeight: implicitHeight
 
-                        text: qsTr("Выберите метод расчета суммы оплат по договору: платежи или счет со статусом оплачено")
+                        text: qsTr("Select a convenient date format")
                         font.pixelSize: Qt.application.font.pixelSize * .9
                     }
                     RowLayout {
@@ -169,7 +171,7 @@ Item {
                             id: setting_dateA
                             Layout.fillHeight: true
                             Layout.preferredWidth: implicitWidth
-                            text: qsTr("dd.MM.yyyy")
+                            text: "dd.MM.yyyy"
                             ButtonGroup.group: sett_date
                             onClicked: appSetting.setValue("dateFormat", "dd.MM.yyyy")
                         }
@@ -177,7 +179,7 @@ Item {
                             id: setting_dateB
                             Layout.fillHeight: true
                             Layout.preferredWidth: implicitWidth
-                            text: qsTr("MM-dd-yyyy")
+                            text: "MM-dd-yyyy"
                             ButtonGroup.group: sett_date
                             onClicked: appSetting.setValue("dateFormat", "MM-dd-yyyy")
                         }
@@ -185,7 +187,7 @@ Item {
                             id: setting_dateC
                             Layout.fillHeight: true
                             Layout.preferredWidth: implicitWidth
-                            text: qsTr("dd-MM-yyyy")
+                            text: "dd-MM-yyyy"
                             ButtonGroup.group: sett_date
                             onClicked: appSetting.setValue("dateFormat", "dd-MM-yyyy")
                         }
@@ -193,7 +195,7 @@ Item {
                             id: setting_dateD
                             Layout.fillHeight: true
                             Layout.preferredWidth: implicitWidth
-                            text: qsTr("dd/MM/yyyy")
+                            text: "dd/MM/yyyy"
                             ButtonGroup.group: sett_date
                             onClicked: appSetting.setValue("dateFormat", "dd/MM/yyyy")
                         }
@@ -208,6 +210,7 @@ Item {
                         Layout.preferredHeight: 2
                         radius: 2
                         color: Const.CLR_YELLOW
+                        opacity: .3
                     }
                 }
             }
@@ -224,7 +227,7 @@ Item {
                         Layout.fillWidth: true
                         Layout.preferredHeight: implicitHeight
 
-                        text: qsTr("Select a lang")
+                        text: qsTr("Language")
                         font.pixelSize: Qt.application.font.pixelSize * .9
                     }
                     ComboBox {
@@ -233,14 +236,19 @@ Item {
                         Layout.preferredWidth: 200
                         Layout.topMargin: 5
                         Layout.bottomMargin: 5
-                        model: ["English", "Ukraine"]
-                        onActivated: appSetting.setValue("lang", currentIndex)
+                        model: ["English", "Українська"]
+                        onActivated: {
+
+                            appSetting.setValue("lang", currentText);
+                            trManager.switchLang(currentText);
+                        }
                     }
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 2
                         radius: 2
                         color: Const.CLR_YELLOW
+                        opacity: .3
                     }
                 }
             }
@@ -257,8 +265,7 @@ Item {
                         Layout.fillWidth: true
                         Layout.preferredHeight: implicitHeight
 
-                        text: qsTr("Select default currency. Этот параметр будет ставить эту валюту при создании новых документов.
-                    Вы сможете изменять валюту документов и создавать документы в любой валюте без ограничений.")
+                        text: qsTr("Select default currency. You will be able to change the currency of documents and create documents in any currency without restrictions.")
                         font.pixelSize: Qt.application.font.pixelSize * .9
                     }
                     ComboBox {
@@ -277,6 +284,7 @@ Item {
                         Layout.preferredHeight: 2
                         radius: 2
                         color: Const.CLR_YELLOW
+                        opacity: .3
                     }
                 }
             }
@@ -284,7 +292,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 90
                 header: Label {
-                    text: qsTr("Aрхивация")
+                    text: qsTr("Archiving")
                     font.pixelSize: Qt.application.font.pixelSize * 1.3
                 }
                 contentItem: ColumnLayout {
@@ -293,7 +301,7 @@ Item {
                         Layout.fillWidth: true
                         Layout.preferredHeight: implicitHeight
 
-                        text: qsTr("Установите период, по истечении которого завершенный документ автоматически будет переведен в архив.")
+                        text: qsTr("Set the period after which the completed document will be automatically transferred to the archive.")
                         font.pixelSize: Qt.application.font.pixelSize * .9
                     }
                     RowLayout {
@@ -304,7 +312,7 @@ Item {
                             id: setting_archive_enable
                             Layout.fillHeight: true
                             Layout.preferredWidth: 120
-                            text: "Archivation"
+                            text: "After"
                             onClicked: {
                                 appSetting.setValue("archive_enable", setting_archive_enable.checked)
                                 appSetting.setValue("archive_month", setting_archive_month.realValue)
@@ -343,6 +351,7 @@ Item {
                         Layout.preferredHeight: 2
                         radius: 2
                         color: Const.CLR_YELLOW
+                        opacity: .3
                     }
                 }
             }
@@ -359,7 +368,7 @@ Item {
                         Layout.fillWidth: true
                         Layout.preferredHeight: implicitHeight
 
-                        text: qsTr("Установите период, по истечении которого Aborted документ автоматически будет delete.")
+                        text: qsTr("Set the period after which the cancelled contract will be automatically deleted.")
                         font.pixelSize: Qt.application.font.pixelSize * .9
                     }
                     RowLayout {
@@ -370,7 +379,7 @@ Item {
                             id: setting_delete_enable
                             Layout.fillHeight: true
                             Layout.preferredWidth: 120
-                            text: "Deleting"
+                            text: "After"
                             onClicked: {
                                 appSetting.setValue("delete_enable", setting_delete_enable.checked)
                                 appSetting.setValue("delete_month", setting_delete_month.realValue)
@@ -409,6 +418,7 @@ Item {
                         Layout.preferredHeight: 2
                         radius: 2
                         color: Const.CLR_YELLOW
+                        opacity: .3
                     }
                 }
             }

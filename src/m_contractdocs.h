@@ -51,7 +51,7 @@ private:
     QList<Section> DATA;
     int CONTRACT_ID = 0;
 
-    const QStringList sections = {"Amendment", "Invoice", "Payments", "Correspondence", "Estimate", "Goods", "Acts", "Other"};
+    QStringList sections = {tr("Amendments"), tr("Invoices"), tr("Payments"), tr("Correspondence"), tr("Estimates"), tr("Goods"), tr("Acts"), tr("Others")};
 
     int getDocumentsPosition(const QList<QVariantMap>& documents, int id);
 

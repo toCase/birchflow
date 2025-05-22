@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
+import "const.js" as Const
 Item {
 
     id: app
@@ -12,6 +13,7 @@ Item {
             PropertyChanges {}
             StateChangeScript {
                 script: {
+                    dash.load();
                     app_stack.pop();
                     app_stack.push(dash);
                 }
@@ -22,6 +24,7 @@ Item {
             PropertyChanges {}
             StateChangeScript {
                 script: {
+                    modelPartners.load();
                     app_stack.pop();
                     app_stack.push(partners);
                 }
@@ -89,9 +92,9 @@ Item {
                 onClicked: app.state = "SETT"
             }
             TabButton {
-                text: qsTr("About")
+                text: qsTr("BirchFlow")
                 width: implicitWidth
-                onClicked: about.open()//app.state = "ABO"
+                onClicked: app.state = "ABO"
             }
         }
 
@@ -158,9 +161,6 @@ Item {
 
     About {
         id: about
-        x: app.width * .15
-        y: app.width * .05
-        width: 600
-        height: 400
+        visible: false
     }
 }

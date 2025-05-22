@@ -11,7 +11,7 @@ Item {
 
     id: partner_main
 
-    signal open(int i)
+    signal open(int partner_id)
 
     QtObject {
         id: internal
@@ -28,6 +28,9 @@ Item {
             }
         }
     }
+
+
+
 
     ColumnLayout {
         anchors.fill: parent
@@ -47,7 +50,7 @@ Item {
                 Layout.topMargin: 5
                 Layout.bottomMargin: 5
 
-                placeholderText: "filter..."
+                placeholderText: qsTr("filter by title, reg code, address, description...")
                 onTextEdited: modelProxyPartner.setFilter(text)
             }
             Item {
@@ -56,7 +59,7 @@ Item {
             Button_DF {
                 Layout.fillHeight: true
                 Layout.preferredWidth: 80
-                text: "ADD"
+                text: qsTr("ADD")
                 onClicked: {
                     new_name.clear()
                     dia_new.open()
@@ -75,33 +78,53 @@ Item {
             spacing: 5
             clip: true
 
-            delegate: Rectangle {
+            delegate: Item {
 
                 id: row
                 width: cm_table.width
-                height: 135
-                color: Const.CLR_ROW
-                radius: 5
+                height: 75
 
                 required property int c_id;
+                required property string c_code;
                 required property string c_name;
                 required property string real_address;
                 required property string c_url;
+                required property int c_contracts;
                 required property int index;
+
+                Rectangle {
+                    id: row_bg
+                    anchors.fill: parent
+                    color: Const.CLR_ROW
+                    radius: 5
+                }
 
                 MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
                     onHoveredChanged: {
-                        row.color = containsMouse ? "#4b5159" : Const.CLR_ROW
+                        row_bg.color = containsMouse ? Const.CLR_YELLOW : Const.CLR_ROW
+                        row_bg.opacity = containsMouse ? .3 : 1
                     }
-                    onClicked: partner_main.open(c_id)
+                    onClicked: partner_main.open(row.c_id)
                 }
 
                 RowLayout {
                     anchors.fill: parent
-                    anchors.margins: 35
-                    spacing: 5
+                    anchors.margins: 15
+                    spacing: 20
+
+                    Label {
+                        Layout.preferredWidth: 120
+                        Layout.fillHeight: true
+
+                        text: c_code
+                        elide: Text.ElideRight
+                        font.pixelSize: Qt.application.font.pixelSize * 1.1
+                        font.bold: true
+                        horizontalAlignment: Qt.AlignLeft
+                        verticalAlignment: Qt.AlignVCenter
+                    }
 
                     ColumnLayout {
                         Layout.fillHeight: true
@@ -111,16 +134,21 @@ Item {
                         Label {
                             Layout.fillWidth: true
                             Layout.preferredHeight: implicitHeight
+                            Layout.leftMargin: 15
 
                             text: c_name.toUpperCase()
-                            font.pixelSize: Qt.application.font.pixelSize * 1.7
+                            font.pixelSize: Qt.application.font.pixelSize * 1.3
                             font.bold: true
                         }
 
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 1
-                            color: "#1f2630"
+                            gradient: Gradient {
+                                orientation: Gradient.Horizontal
+                                GradientStop { position: 0.0; color: Const.CLR_YELLOW }
+                                GradientStop { position: 1.0; color: "transparent" }
+                            }
                         }
                         Label {
                             Layout.fillWidth: true
@@ -129,22 +157,21 @@ Item {
                             text: real_address
                             font.pixelSize: Qt.application.font.pixelSize * .8
                         }
-                        Label {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: implicitHeight
-
-                            text: c_url
-                            font.pixelSize: Qt.application.font.pixelSize * .8
-                        }
                     }
-                    Item {
+                    Label {
+                        Layout.preferredWidth: 150
                         Layout.fillHeight: true
-                        Layout.preferredWidth: 200
+
+                        text: c_contracts > 0 ? c_contracts : ""
+                        font.pixelSize: Qt.application.font.pixelSize * 1.3
+                        font.bold: true
+                        horizontalAlignment: Qt.AlignHCenter
+                        verticalAlignment: Qt.AlignVCenter
                     }
                     ToolButton {
                         Layout.preferredHeight: 44
                         Layout.preferredWidth: 44
-                        icon.source: "qrc:/qt/qml/DocFlow/img/info"
+                        icon.source: "qrc:/qt/qml/BirchFlow/img/info"
                         icon.width: 16
                         icon.height: 16
                         icon.color: Const.CLR_ICON
@@ -157,6 +184,7 @@ Item {
             }
         }
     }
+
 
     PartnersInfo {
         id: partners_info
@@ -183,7 +211,7 @@ Item {
                 Layout.rightMargin: 30
                 Layout.topMargin: 12
                 Layout.bottomMargin: 12
-                placeholderText: "Shot name"
+                placeholderText: qsTr("Short title")
             }
         }
         footer: Item {

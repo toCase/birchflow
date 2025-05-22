@@ -1,11 +1,9 @@
 #include "m_partner.h"
 
-ModelPartners::ModelPartners(DatabaseWorker *dbw, QObject *parent)
-    : dbWorker(dbw), QAbstractListModel{parent}
+ModelPartners::ModelPartners(DatabaseWorker *dbw, NotificationManager *nm, FileManager *fm, QObject *parent)
+    : dbWorker(dbw), m_notification(nm), m_fileManager(fm), QAbstractListModel{parent}
 {
-    beginResetModel();
-    DATA = dbWorker->getData(Tables::PARTNERS);
-    endResetModel();
+    load();
 }
 
 int ModelPartners::getPosition(int id)
@@ -20,6 +18,7 @@ int ModelPartners::getPosition(int id)
     }
     return pos;
 }
+
 
 int ModelPartners::rowCount(const QModelIndex &parent) const
 {
@@ -59,8 +58,9 @@ QVariant ModelPartners::data(const QModelIndex &index, int role) const
     case NOTE:
         res = CARD.value("note");
         break;
-    case CREATED:
-        res = CARD.value("created");
+
+    case CONTRACTS:
+        res = CARD.value("contracts");
         break;
     default:
         break;
@@ -79,9 +79,16 @@ QHash<int, QByteArray> ModelPartners::roleNames() const
     roles[CODE] = "c_code";
     roles[URL] = "c_url";
     roles[NOTE] = "c_note";
-    roles[CREATED] = "c_created";
+    roles[CONTRACTS] = "c_contracts";
 
     return roles;
+}
+
+void ModelPartners::load()
+{
+    beginResetModel();
+    DATA = dbWorker->getData(Tables::PARTNERS);
+    endResetModel();
 }
 
 QVariantMap ModelPartners::add(QVariantMap card)
@@ -95,12 +102,13 @@ QVariantMap ModelPartners::add(QVariantMap card)
         card.insert("real_address", QString());
         card.insert("url", QString());
         card.insert("note", QString());
+        card.insert("contracts", 0);
 
         beginInsertRows(QModelIndex(), 0, 0);
         DATA.insert(0, card);
         endInsertRows();
     } else {
-        qDebug() << res.value("error").toString();
+        m_notification->notify(res.value("error").toString(), Notes::ERROR);
     }
     return res;
 }
@@ -110,10 +118,13 @@ QVariantMap ModelPartners::save(QVariantMap card)
     QVariantMap res = dbWorker->saveData(Tables::PARTNERS, card);
     if (res.value("r").toBool()){
         int pos = getPosition(card.value("id").toInt());
+        auto& old_card = DATA[pos];
+        card.insert("contracts", old_card.value("contracts"));
         DATA[pos] = card;
         emit dataChanged(index(pos), index(pos));
+        m_notification->makeNote("Saved success", Notes::SUCCESS);
     } else {
-        qDebug() << "m save error: "<< res.value("error").toString();
+        m_notification->notify(res.value("error").toString(), Notes::ERROR);
     }
     return res;
 }
@@ -121,6 +132,31 @@ QVariantMap ModelPartners::save(QVariantMap card)
 QVariantMap ModelPartners::getCard(int id)
 {
     return DATA.at(getPosition(id));
+}
+
+bool ModelPartners::del(int id)
+{
+    int pos = getPosition(id);
+    QStringList doc_uuid = dbWorker->getPartnerUuids(id);
+
+    dbWorker->delData(Tables::PARTNERS_DOC, QVariantMap{{"partner_id", id}});
+    dbWorker->delData(Tables::PARTNERS_BANK, QVariantMap{{"partner_id", id}});
+    dbWorker->delData(Tables::PARTNERS_PERSON, QVariantMap{{"partner_id", id}});
+    bool r = dbWorker->delData(Tables::PARTNERS, QVariantMap{{"id", id}});
+    if (r) {
+        for (auto& uuid: doc_uuid) {
+            m_fileManager->removeDoc(uuid);
+        }
+
+        beginRemoveRows(QModelIndex(), pos, pos);
+        DATA.removeAt(pos);
+        endRemoveRows();
+
+        m_notification->makeNote(tr("Delete completed"), Notes::NOTIFY);
+    } else {
+        m_notification->makeNote("Unkown document delete error, sorry", Notes::ERROR);
+    }
+    return r;
 }
 
 QString ModelPartners::getInfoDoc(int id)

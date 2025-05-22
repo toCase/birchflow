@@ -9,7 +9,7 @@ Item {
     property int m_heightNote: 60
 
     function createMessage(textNote, typeNote) {
-        let popup = Qt.createComponent("qrc:/qt/qml/DocFlow/qml/controls/Notify_DF.qml").createObject(Overlay.overlay, {textNote:textNote, typeNote:typeNote});
+        let popup = Qt.createComponent("qrc:/qt/qml/BirchFlow/qml/controls/Notify_DF.qml").createObject(Overlay.overlay, {textNote:textNote, typeNote:typeNote});
 
         messages.push(popup)
 

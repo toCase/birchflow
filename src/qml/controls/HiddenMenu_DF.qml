@@ -51,7 +51,7 @@ Item {
                 height: 44;
                 flat: true
 
-                icon.source: root.expanded ? "qrc:/qt/qml/DocFlow/img/exp-up" : "qrc:/qt/qml/DocFlow/img/exp-down"
+                icon.source: root.expanded ? "qrc:/qt/qml/BirchFlow/img/exp-up" : "qrc:/qt/qml/BirchFlow/img/exp-down"
                 icon.width: 16
                 icon.height: 16
                 icon.color: Const.CLR_ICON
@@ -62,7 +62,7 @@ Item {
                 height: 44;
                 flat: true
 
-                icon.source: "qrc:/qt/qml/DocFlow/img/report"
+                icon.source: "qrc:/qt/qml/BirchFlow/img/report"
                 icon.width: 16
                 icon.height: 16
                 icon.color: Const.CLR_ICON
@@ -73,7 +73,7 @@ Item {
                 height: 44;
                 flat: true
 
-                icon.source: "qrc:/qt/qml/DocFlow/img/zip-file"
+                icon.source: "qrc:/qt/qml/BirchFlow/img/zip-file"
                 icon.width: 16
                 icon.height: 16
                 icon.color: Const.CLR_ICON

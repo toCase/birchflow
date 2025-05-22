@@ -4,12 +4,14 @@
 #include <QObject>
 
 #include "database.h"
+#include "notificationmanager.h"
+
 
 class ModelPartnerPerson : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    explicit ModelPartnerPerson(DatabaseWorker *dbw, QObject *parent = nullptr);
+    explicit ModelPartnerPerson(DatabaseWorker *dbw, NotificationManager *nm, QObject *parent = nullptr);
 
 
     enum RoleNames : int {
@@ -23,6 +25,7 @@ public:
 
 private:
     DatabaseWorker *dbWorker;
+    NotificationManager *m_notification;
     QList<QVariantMap> DATA;
     int PARTNER_ID = -1;
 

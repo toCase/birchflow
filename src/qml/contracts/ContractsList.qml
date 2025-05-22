@@ -74,8 +74,8 @@ Item {
             Layout.rightMargin: 60
             Button_DF {
                 Layout.fillHeight: true
-                Layout.preferredWidth: 80
-                text: "FILTER"
+                Layout.preferredWidth: implicitWidth
+                text: qsTr("FILTER")
                 onClicked: dia_filter.open();
             }
 
@@ -86,7 +86,7 @@ Item {
                 Layout.topMargin: 5
                 Layout.bottomMargin: 5
 
-                placeholderText: "filter..."
+                placeholderText: qsTr("filter...")
                 onTextEdited: modelProxyContracts.setQuickFilter(text)
             }
             Item {
@@ -94,8 +94,8 @@ Item {
             }
             Button_DF {
                 Layout.fillHeight: true
-                Layout.preferredWidth: 80
-                text: "ADD"
+                Layout.preferredWidth: implicitWidth
+                text: qsTr("ADD")
                 onClicked: internal.add();
             }
         }
@@ -114,13 +114,11 @@ Item {
             spacing: 5
             clip: true
 
-            delegate: Rectangle {
+            delegate: Item {
 
                 id: row
                 width: table.width
                 height: 75
-                color: Const.CLR_ROW
-                radius: 5
 
                 required property int c_id;
                 required property string c_num;
@@ -135,11 +133,19 @@ Item {
                 required property string c_paid
                 required property int index;
 
+                Rectangle {
+                    id: row_bg
+                    anchors.fill: parent
+                    color: Const.CLR_ROW
+                    radius: 5
+                }
+
                 MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
                     onHoveredChanged: {
-                        row.color = containsMouse ? "#4b5159" : Const.CLR_ROW
+                        row_bg.color = containsMouse ? Const.CLR_YELLOW : Const.CLR_ROW
+                        row_bg.opacity = containsMouse ? .3 : 1
                     }
                     onClicked: {
                         if (row.status === 4) {
@@ -253,7 +259,7 @@ Item {
                         Layout.preferredHeight: 44
                         Layout.preferredWidth: 44
                         enabled: row.status !== 4
-                        icon.source: "qrc:/qt/qml/DocFlow/img/edit"
+                        icon.source: "qrc:/qt/qml/BirchFlow/img/edit"
                         icon.width: 16
                         icon.height: 16
                         icon.color: Const.CLR_ICON

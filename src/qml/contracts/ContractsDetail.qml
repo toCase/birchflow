@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
-import QtQuick.Dialogs
+import Qt.labs.platform
 import QtCore
 
 import "../const.js" as Const
@@ -125,13 +125,13 @@ Item {
                 doc_form.title = qsTr("Goods")
                 break;
             case 6:
-                doc_form.title = qsTr("Acts")
+                doc_form.title = qsTr("Act")
                 break;
             case 7:
                 doc_form.title = qsTr("Document")
                 break;
             default:
-                doc_form.title = "Document"
+                doc_form.title = qsTr("Document")
                 break;
             }
             doc_form.doc_num = ""
@@ -156,13 +156,13 @@ Item {
                 doc_form.title = qsTr("Goods")
                 break;
             case 6:
-                doc_form.title = qsTr("Acts")
+                doc_form.title = qsTr("Act")
                 break;
             case 7:
                 doc_form.title = qsTr("Document")
                 break;
             default:
-                doc_form.title = "Document"
+                doc_form.title = qsTr("Document")
                 break;
             }
             let card = modelContractDocs.getCard(doc, doc_id)
@@ -190,7 +190,7 @@ Item {
                 pay_form.title = qsTr("Payment")
                 break;
             default:
-                pay_form.title = "Document"
+                pay_form.title = qsTr("Document")
                 break;
             }
             pay_form.doc_num = "";
@@ -290,7 +290,7 @@ Item {
 
                             flat: true
 
-                            icon.source: "qrc:/qt/qml/DocFlow/img/prev"
+                            icon.source: "qrc:/qt/qml/BirchFlow/img/prev"
                             icon.width: 24
                             icon.height: 24
                             icon.color: Const.CLR_ICON
@@ -325,7 +325,7 @@ Item {
                             Layout.alignment: Layout.Center
                             active: contract_detail.contract_type > 0;
                             sourceComponent: Image {
-                                source: contract_detail.contract_type === 1 ? "qrc:/qt/qml/DocFlow/img/trend-up" : "qrc:/qt/qml/DocFlow/img/trend-down"
+                                source: contract_detail.contract_type === 1 ? "qrc:/qt/qml/BirchFlow/img/trend-up" : "qrc:/qt/qml/BirchFlow/img/trend-down"
                                 fillMode: Image.PreserveAspectFit
                                 mipmap: true
                                 cache: false
@@ -372,6 +372,7 @@ Item {
             Layout.preferredHeight: 3
             radius: 3
             color: Const.CLR_YELLOW
+            opacity: .3
         }
 
         TreeView {
@@ -455,7 +456,7 @@ Item {
                                 Layout.preferredWidth: 50
                                 flat: true
 
-                                icon.source: "qrc:/qt/qml/DocFlow/img/plus"
+                                icon.source: "qrc:/qt/qml/BirchFlow/img/plus"
                                 icon.width: 16
                                 icon.height: 16
                                 icon.color: Const.CLR_ICON
@@ -476,7 +477,7 @@ Item {
                                 Layout.rightMargin: 20
                                 active: cell.file.length > 0
                                 sourceComponent: Image {
-                                    source: "qrc:/qt/qml/DocFlow/img/" + cell.file
+                                    source: "qrc:/qt/qml/BirchFlow/img/" + cell.file
                                     fillMode: Image.PreserveAspectFit
                                     mipmap: true
                                 }
@@ -537,9 +538,9 @@ Item {
                                 Rectangle {
                                     anchors.centerIn: parent
                                     visible: cell.status === 99 ? false : true
-                                    width: 25
-                                    height: 25
-                                    radius: 25
+                                    width: 16
+                                    height: 16
+                                    radius: 16
                                     color:{
                                         switch (cell.status) {
                                         case 0:
@@ -564,7 +565,7 @@ Item {
                                 flat: true
                                 enabled: cell.file.length > 0
 
-                                icon.source: "qrc:/qt/qml/DocFlow/img/open"
+                                icon.source: "qrc:/qt/qml/BirchFlow/img/open"
                                 icon.width: 16
                                 icon.height: 16
                                 icon.color: cell.file.length > 0 ? Const.CLR_ICON : "gray"
@@ -586,10 +587,7 @@ Item {
 
                 background: Rectangle {
                     color: is_section ? "transparent"  : ma.containsMouse && column === 1 ? Const.CLR_YELLOW : "transparent"
-                    // topRightRadius: is_section ? (column === 2 ? 7 : 0) : 0
-                    // bottomRightRadius: is_section ? (column === 2 ? 7 : 0) : 0
-                    // topLeftRadius: is_section ? (column === 0 ? 7 : 0) : 0
-                    // bottomLeftRadius: is_section ? (column === 0 ? 7 : 0) : 0
+                    opacity: .2
                     radius: 5
                 }
 
@@ -673,12 +671,12 @@ Item {
 
     FileDialog {
         id: dialog_file
-        currentFolder: StandardPaths.standardLocations(StandardPaths.DocumentsLocation)[0]
+        folder: StandardPaths.standardLocations(StandardPaths.DocumentsLocation)[0]
         fileMode: FileDialog.SaveFile
         defaultSuffix: "zip"
         nameFilters: ["Zip file (*.zip)"]
         onAccepted: {
-            let zip_file = modelContractDocs.toLocalFile(selectedFile);
+            let zip_file = modelContractDocs.toLocalFile(currentFile);
             modelContractDocs.makeArchive(zip_file);
         }
     }

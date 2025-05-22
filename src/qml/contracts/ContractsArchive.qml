@@ -11,7 +11,7 @@ import DocFlow.models 1.0
 Dialog {
     id: root
 
-    title: "Document Archive Summary"
+    title: qsTr("Document Archive Summary")
 
     property string markdownText: ""
     property int contract_id: 0
@@ -75,50 +75,14 @@ Dialog {
         }
     }
 
-    Dialog {
+    AcceptDeleteDialog {
         id: del_dialog
-        width: 400
-        height: 150
-        title: qsTr("Delete archived contract")
-
-        Label {
-            text: qsTr("Are you sure?")
-        }
-        footer: Item {
-            width: parent.width
-            height: 70
-            RowLayout {
-                anchors.fill: parent
-                anchors.leftMargin: 30
-                anchors.rightMargin: 30
-                anchors.topMargin: 12
-                anchors.bottomMargin: 12
-                spacing: 5
-                Button_DF{
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: 100
-                    text: qsTr("Delete")
-                    onClicked:{
-                        modelContracts.del(root.contract_id)
-                        del_dialog.close()
-                        root.close()
-                    }
-                }
-                Item {
-                    Layout.fillWidth: true
-                    Layout.horizontalStretchFactor: 1
-                }
-                Button_DF {
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: 100
-                    text: qsTr("Cancel")
-                    onClicked: {
-                        del_dialog.close()
-                    }
-                }
-            }
+        x: dia_form.x + 20
+        y: dia_form.y + 20
+        onAccepted: {
+            modelContracts.del(root.contract_id)
+            del_dialog.close()
+            root.close()
         }
     }
-
-
 }

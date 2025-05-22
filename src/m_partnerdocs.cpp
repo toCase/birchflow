@@ -1,7 +1,7 @@
 #include "m_partnerdocs.h"
 
-ModelPartnerDoc::ModelPartnerDoc(DatabaseWorker *dbw, FileManager *fm, QObject *parent)
-    : dbWorker(dbw), fileManager(fm), QAbstractListModel{parent}
+ModelPartnerDoc::ModelPartnerDoc(DatabaseWorker *dbw, FileManager *fm, NotificationManager *nm, QObject *parent)
+    : dbWorker(dbw), m_fileManager(fm), m_notification(nm), QAbstractListModel{parent}
 {}
 
 int ModelPartnerDoc::getPosition(int id)
@@ -73,16 +73,30 @@ QVariantMap ModelPartnerDoc::getCard(int id)
 
 QVariantMap ModelPartnerDoc::save(QVariantMap card)
 {
-    QString original_file = card.value("file").toString();
-    QString ext = fileManager->getSuffix(original_file);
-    card.insert("file", ext);
+    QVariantMap res;
+    // file
+    QString origin_file;
+    QString uuid;
+    //тільки первісний док враховує файл, оновлення файлу тільки через updateFile()
+    if (card.value("id").toInt() == 0) {
+        origin_file = card.value("file").toString();
+        QString ext = m_fileManager->getSuffix(origin_file);
+        card.insert("file", ext);
+
+        uuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
+        card.insert("uuid", uuid);
+    }
 
     card.insert("created", QDateTime::currentSecsSinceEpoch());
-    QVariantMap res = dbWorker->saveData(Tables::PARTNERS_DOC, card);
+
+
+    res = dbWorker->saveData(Tables::PARTNERS_DOC, card);
+
     if (res.value("r").toBool()) {
         if (card.value("id").toInt() == 0){
 
-            fileManager->createPartnerDoc(original_file, card.value("partner_id").toInt(), res.value("id").toInt());
+            // fileManager->createPartnerDoc(original_file, card.value("partner_id").toInt(), res.value("id").toInt());
+            m_fileManager->createDoc(origin_file, card.value("uuid").toString());
 
             beginInsertRows(QModelIndex(), 0, 0);
             card.insert("id", res.value("id"));
@@ -93,44 +107,84 @@ QVariantMap ModelPartnerDoc::save(QVariantMap card)
 
             QVariantMap old_card = DATA[pos];
             card.insert("file", old_card.value("file"));
+            card.insert("uuid", old_card.value("uuid"));
 
             DATA[pos] = card;
             emit dataChanged(index(pos), index(pos));
         }
+        m_notification->makeNote("Saved success", Notes::SUCCESS);
     } else {
-        qDebug() << res.value("err").toString();
+        m_notification->makeNote(res.value("err").toString(), Notes::ERROR);
+    }
+    return res;
+}
+
+QVariantMap ModelPartnerDoc::updateFile(QVariantMap card)
+{
+    int pos = getPosition(card.value("id").toInt());
+    auto& old_card = DATA[pos];
+
+    QString origin_file = card.value("file").toString();
+    if (origin_file.isEmpty()) {
+        m_fileManager->removeDoc(old_card.value("uuid").toString());
+    }
+    QString ext = m_fileManager->getSuffix(origin_file);
+    card.insert("file", ext);
+    card.insert("created", QDateTime::currentSecsSinceEpoch());
+    QList<int> params = {Params::ONLY_FILE};
+    QVariantMap res = dbWorker->saveData(Tables::PARTNERS_DOC, card, params);
+    if (res.value("r").toBool()) {
+
+        if (!origin_file.isEmpty()) {
+            m_fileManager->createDoc(origin_file, old_card.value("uuid").toString());
+        }
+
+        old_card.insert("file", ext);
+        old_card.insert("created", card.value("created"));
+        emit dataChanged(index(pos), index(pos));
+
+        m_notification->makeNote("File updated", Notes::SUCCESS);
+    } else {
+        m_notification->makeNote(res.value("err").toString(), Notes::ERROR);
     }
     return res;
 }
 
 bool ModelPartnerDoc::del(int id)
 {
-    fileManager->removePartnerDoc(PARTNER_ID, id);
-
     int pos = getPosition(id);
-    QVariantMap params;
-    params.insert("id", id);
 
-    bool res = dbWorker->delData(Tables::PARTNERS_DOC, params);
+    QVariantMap card = getCard(id);
 
-    if (res) {
+    bool r = dbWorker->delData(Tables::PARTNERS_DOC, QVariantMap{{"id", id}});
+    if (r) {
+        // remove files
+        m_fileManager->removeDoc(card.value("uuid").toString());
+
+        //
         beginRemoveRows(QModelIndex(), pos, pos);
-        DATA.removeOne(pos);
+        DATA.removeAt(pos);
         endRemoveRows();
+
+
+        m_notification->makeNote(tr("Delete completed"), Notes::NOTIFY);
+    }  else {
+        m_notification->makeNote("Unkown error while deleting, sorry", Notes::ERROR);
     }
-    return res;
+    return r;
 }
 
 void ModelPartnerDoc::viewDoc(int id)
 {
     QVariantMap card = DATA.at(getPosition(id));
-    QString fileName = QString::number(PARTNER_ID) + "_" + QString::number(id) + "." + card.value("file").toString();
+    QString fileName = card.value("uuid").toString() + "." + card.value("file").toString();
 
-    fileManager->openFile(fileName);
+    m_fileManager->openFile(fileName);
+
 }
 
 
 QString ModelPartnerDoc::toLocalFile(const QUrl &location)
 {
-    return fileManager->toLocalFile(location);
+    return m_fileManager->toLocalFile(location);
 }

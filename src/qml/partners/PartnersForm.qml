@@ -66,7 +66,6 @@ Item {
         }
     ]
 
-
     ColumnLayout {
         anchors.fill: parent
 
@@ -83,7 +82,7 @@ Item {
                 Layout.topMargin: -5
                 Layout.bottomMargin: -7
 
-                icon.source: "qrc:/qt/qml/DocFlow/img/prev"
+                icon.source: "qrc:/qt/qml/BirchFlow/img/prev"
                 icon.width: 16
                 icon.height: 16
                 icon.color: Const.CLR_ICON
@@ -103,7 +102,7 @@ Item {
                 Layout.fillHeight: true
 
                 TabButton {
-                    text: qsTr("FORM")
+                    text: qsTr("CARD")
                     onClicked: partner_form.state = "EDIT"
                 }
                 TabButton {
@@ -111,7 +110,7 @@ Item {
                     onClicked: partner_form.state = "BANK"
                 }
                 TabButton {
-                    text: qsTr("PERSONS")
+                    text: qsTr("CONTACT PERSON")
                     onClicked: partner_form.state = "PERS"
                 }
                 TabButton {
@@ -166,6 +165,14 @@ Item {
     PartnersEdit {
         id: pf_edit
         visible: false
+    }
+    Connections {
+        target: pf_edit
+        function onDeleted() {
+            partner_form.state = "EDIT"
+            form_tabbar.currentIndex = 0
+            partner_form.close()
+        }
     }
 
     PartnersPersons {

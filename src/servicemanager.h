@@ -26,6 +26,7 @@ private:
     QStringList type_list = {tr("Amendment"), tr("Invoice"), tr("Payment"), tr("Correspondence"),
                              tr("Estymate"), tr("Goods"), tr("Acts"), tr("Documents")};
 
+public:
     void archiveService();
     QList<QVariantMap> generateArchive(const QVariantMap &card);
     void generateDocumentArchiveSummary(const QVariantMap &card, const QList<QVariantMap>& documents);

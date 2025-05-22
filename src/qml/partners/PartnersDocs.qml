@@ -23,31 +23,40 @@ Item {
         id: internal
 
         function open(idx) {
-            partner_doc.doc_id = idx
+            // partner_doc.doc_id = idx
+            // let card = modelPartnerDoc.getCard(idx);
+            // form_name.text = card.name
+            // form_file.text = card.file
+            // form_note.text = card.note
+            // form_created.text = "Date at: " + card.created
+
+            // row_file.visible = false
+            // but_open.visible = true
+
+            // dia_form.open();
+            // console.log(partner_doc.doc_id);
+
+            // ///
+
             let card = modelPartnerDoc.getCard(idx);
-            form_name.text = card.name
-            form_file.text = card.file
-            form_note.text = card.note
-            form_created.text = "Date at: " + card.created
-
-            row_file.visible = false
-            but_open.visible = true
-
-            dia_form.open();
-            console.log(partner_doc.doc_id);
+            doc_dialog.doc_id = idx;
+            doc_dialog.partner_id = partner_doc.partner_id;
+            doc_dialog.p_name = card.name;
+            doc_dialog.p_note = card.note;
+            doc_dialog.p_file = card.file;
+            doc_dialog.has_file = card.file === "" ? false : true;
+            doc_dialog.open();
         }
 
         function add() {
-            partner_doc.doc_id = 0
-            form_name.clear()
-            form_file.clear()
-            form_note.clear()
-            form_created.text = ""
+            doc_dialog.doc_id = 0
+            doc_dialog.partner_id = partner_doc.partner_id
+            doc_dialog.p_name = ""
+            doc_dialog.p_note = ""
+            doc_dialog.p_file = ""
+            doc_dialog.has_file = false
 
-            row_file.visible = true
-            but_open.visible = false
-
-            dia_form.open();
+            doc_dialog.open()
         }
 
         function save(){
@@ -87,7 +96,7 @@ Item {
                 Layout.preferredWidth: partner_doc.width / 2
                 Layout.topMargin: 5
                 Layout.bottomMargin: 5
-                placeholderText: "filter..."
+                placeholderText: qsTr("filter by title, description...")
                 onTextChanged: modelProxyPartnerDoc.setFilter(text)
             }
             Item {
@@ -97,7 +106,7 @@ Item {
                 Layout.fillHeight: true
                 Layout.preferredWidth: 80
 
-                text: "ADD"
+                text: qsTr("ADD")
                 onClicked: internal.add()
             }
 
@@ -132,7 +141,7 @@ Item {
                     anchors.fill: parent
                     hoverEnabled: true
                     onHoveredChanged: {
-                        row.color = containsMouse ? "#4b5159" : Const.CLR_ROW
+                        row.color = containsMouse ? Const.CLR_YELLOW : Const.CLR_ROW
                     }
                     onClicked: internal.open(d_id)
                 }
@@ -142,13 +151,17 @@ Item {
                     anchors.margins: 13
                     spacing: 10
 
-                    Image {
-                        Layout.preferredHeight: 42
-                        Layout.preferredWidth: 42
+                    Loader {
+                        Layout.preferredHeight: 36
+                        Layout.preferredWidth: 36
+                        Layout.alignment: Layout.Center
+                        active: row.d_file.length > 0
 
-                        source: "qrc:/qt/qml/DocFlow/img/" + d_file
-                        fillMode: Image.PreserveAspectFit
-                        mipmap: true
+                        sourceComponent: Image {
+                            source: "qrc:/qt/qml/BirchFlow/img/" + d_file
+                            fillMode: Image.PreserveAspectFit
+                            mipmap: true
+                        }
                     }
 
                     Label {
@@ -175,7 +188,7 @@ Item {
                         Layout.preferredHeight: 44
                         Layout.preferredWidth: 44
 
-                        icon.source: "qrc:/qt/qml/DocFlow/img/open"
+                        icon.source: "qrc:/qt/qml/BirchFlow/img/open"
                         icon.width: 16
                         icon.height: 16
                         icon.color: Const.CLR_ICON
@@ -189,13 +202,13 @@ Item {
                         Layout.preferredHeight: 44
                         Layout.preferredWidth: 44
 
-                        icon.source: "qrc:/qt/qml/DocFlow/img/trash"
+                        icon.source: "qrc:/qt/qml/BirchFlow/img/trash"
                         icon.width: 16
                         icon.height: 16
                         icon.color: Const.CLR_RED
 
                         onClicked: {
-                            dia_del.item_id = d_id
+                            dia_del.m_id = d_id
                             dia_del.open()
                         }
                     }
@@ -204,139 +217,19 @@ Item {
         }
     }
 
-    Dialog {
-        id: dia_form
+    PartnersDocDialog {
+        id: doc_dialog
         x: partner_doc.width * .2
         y: partner_doc.width * .05
         width: partner_doc.width - (2 * (partner_doc.width * .2))
-        height: 320
-        title: "Document"
-        contentItem: ColumnLayout {
-            spacing: 8
-
-            TextField {
-                id: form_name
-                Layout.fillWidth: true
-                Layout.preferredHeight: 40
-
-                placeholderText: "Name document"
-            }
-
-
-            RowLayout {
-                id: row_file
-
-                TextField {
-                    id: form_file
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 40
-
-                    placeholderText: "File..."
-                }
-
-                ToolButton {
-                    Layout.preferredWidth: 40
-                    Layout.preferredHeight: 40
-
-                    text: "..."
-                    onClicked: dia_file.open()
-                }
-            }
-
-            TextField {
-                id: form_note
-                Layout.fillWidth: true
-                Layout.preferredHeight: 40
-
-                placeholderText: "Note..."
-            }
-
-
-            Label {
-                id: form_created
-
-                Layout.fillWidth: true
-                Layout.preferredHeight: implicitHeight
-
-                font.pixelSize: Qt.application.font.pixelSize * .8
-                font.italic: true
-            }
-        }
-
-        footer: Item {
-            width: parent.width
-            height: 70
-            RowLayout {
-                anchors.fill: parent
-                anchors.leftMargin: 30
-                anchors.rightMargin: 30
-                anchors.topMargin: 12
-                anchors.bottomMargin: 12
-                spacing: 5
-                Button_DF{
-                    id: but_open
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: 100
-                    text: qsTr("Open file")
-                    onClicked: modelPartnerDoc.viewDoc(partner_doc.doc_id)
-                }
-                Item {
-                    Layout.fillWidth: true
-                    Layout.horizontalStretchFactor: 1
-                }
-                Button_DF {
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: 100
-                    text: qsTr("Save")
-                    onClicked:  {
-                        if (form_name.text.trim().length === 0) {
-                            form_name.focus = true
-                        } else {
-                            internal.save()
-                            dia_form.accept()
-                        }
-                    }
-                }
-                Button_DF {
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: 100
-                    text: qsTr("Close")
-                    onClicked: dia_form.close()
-                }
-            }
-        }
+        height: 305
     }
 
-    Dialog {
+    AcceptDeleteDialog {
         id: dia_del
         x: partner_doc.width * .2
         y: partner_doc.width * .05
-        width: partner_doc.width - (2 * (partner_doc.width * .2))
-        height: 150
-        title: "Delete"
-        standardButtons: Dialog.Ok | Dialog.Cancel
-        property int item_id: 0
-        contentItem: Label {
-            text: "Are you sure?"
-        }
-        onAccepted: internal.del(item_id)
+        onAccepted: modelPartnerDoc.del(dia_del.m_id)
     }
 
-    FileDialog {
-        id: dia_file
-        currentFolder: StandardPaths.standardLocations(StandardPaths.DocumentsLocation)[0]
-        fileMode: FileDialog.OpenFile
-        nameFilters: [
-            "All supported files (*.txt *.md *.nfo *.asc *.log *.ini *.doc *.docx *.odt *.rtf
-                                    *.pages *.wps *.sxw *.pdf *.ps *.djvu *.tex *.rtfd *.xml
-                *.json *.yaml *.yml *.csv *.xls *.xlsx *.ppt *.pptx *.epub *.fb2 *.msg *.eml)",
-            "Text (*.txt *.md *.nfo *.asc *.log *.ini)",
-            "Office (*.doc *.docx *.odt *.rtf *.pages *.wps *.sxw)",
-            "Formatted (*.pdf *.ps *.djvu *.tex *.rtfd)",
-            "Structured (*.xml *.json *.yaml *.yml *.csv)",
-            "Tables/Presentations (*.xls *.xlsx *.ppt *.pptx)",
-            "E-books/Other (*.epub *.fb2 *.msg *.eml)"
-        ]
-        onAccepted: form_file.text = modelPartnerDoc.toLocalFile(selectedFile);
-    }
 }

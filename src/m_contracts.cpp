@@ -128,7 +128,7 @@ QVariant ModelContracts::data(const QModelIndex &index, int role) const
 
     QVariantMap CARD = DATA.at(index.row());
 
-    QVariantMap VALID_DATE = getValidDate(CARD.value("id").toInt());
+    // QVariantMap VALID_DATE = getValidDate(CARD.value("id").toInt());
     QVariantMap VALID_AMOUNT = getValidAmount(CARD.value("id").toInt());
 
     switch (role) {
@@ -145,12 +145,14 @@ QVariant ModelContracts::data(const QModelIndex &index, int role) const
         res = CARD.value("partner");
         break;
     case VALID_FROM:
-        // res = QDate::fromJulianDay(VALID_DATE.value("valid_from").toLongLong()).toString(m_setting->getValue("dateFormat").toString());
-        res = VALID_DATE.value("valid_from").toString();
+        res = CARD.value("n_valid_from").isNull()
+            ? QDate::fromJulianDay(CARD.value("valid_from").toLongLong()).toString(m_setting->getValue("dateFormat").toString())
+                  : QDate::fromJulianDay(CARD.value("n_valid_from").toLongLong()).toString(m_setting->getValue("dateFormat").toString());
         break;
     case VALID_TO:
-        // res = QDate::fromJulianDay(VALID_DATE.value("valid_to").toLongLong()).toString(m_setting->getValue("dateFormat").toString());
-        res = VALID_DATE.value("valid_to").toString();
+        res = CARD.value("n_valid_to").isNull()
+                  ? QDate::fromJulianDay(CARD.value("valid_to").toLongLong()).toString(m_setting->getValue("dateFormat").toString())
+                  : QDate::fromJulianDay(CARD.value("n_valid_to").toLongLong()).toString(m_setting->getValue("dateFormat").toString());
         break;
     case AMOUNT:
         // res = CARD.value("amount");
@@ -246,11 +248,18 @@ QVariantMap ModelContracts::save(QVariantMap card)
             endInsertRows();
         } else {
             int pos = getPosition(card.value("id").toInt());
-            auto& old_card = DATA[pos];
-            card.insert("file", old_card.value("file"));
-            card.insert("uuid", old_card.value("uuid"));
-            DATA[pos] = card;
+            auto upd_card = dbWorker->getData(Tables::CONTRACTS, QVariantMap{{"contract_id", card.value("id")}})[0];
+            DATA[pos] = upd_card;
             emit dataChanged(index(pos), index(pos));
+
+            // make archive
+            if (card.value("status").toInt() == Status::ARCHIVE) {
+                ServiceManager *m_service = new ServiceManager(dbWorker, m_fileManager, m_noteManager, m_setting);
+                auto r = m_service->generateArchive(upd_card);
+                m_service->generateDocumentArchiveSummary(upd_card, r);
+
+                m_service->deleteLater();
+            }
         }
 
         m_noteManager->makeNote("Saved success", Notes::SUCCESS);
@@ -314,9 +323,9 @@ bool ModelContracts::del(int id)
         endRemoveRows();
 
 
-        m_noteManager->makeNote(tr("Contract delete successfull"), Notes::NOTIFY);
+        m_noteManager->makeNote(tr("Delete completed"), Notes::NOTIFY);
     }  else {
-        m_noteManager->makeNote("Unkown document delete error, sorry", Notes::ERROR);
+        m_noteManager->makeNote("Unkown error while deleting, sorry", Notes::ERROR);
     }
     return r;
 }

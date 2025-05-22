@@ -229,6 +229,8 @@ void ModelContractDocs::setContract(int id)
 
     DATA.clear();
 
+    QStringList sections = {tr("Amendments"), tr("Invoices"), tr("Payments"), tr("Correspondence"), tr("Estimates"), tr("Goods"), tr("Acts"), tr("Others")};
+
     for (int i = 0; i < sections.count(); i++){
         QList<QVariantMap> documents;
         switch (i) {
@@ -261,6 +263,8 @@ void ModelContractDocs::setContract(int id)
         }
 
         // qDebug() << documents;
+
+
 
         Section section;
         section.id = i;
@@ -403,7 +407,7 @@ bool ModelContractDocs::deleteDoc(int type_id, int doc_id)
         DATA[type_id] = section;
         endRemoveRows();
 
-        m_noteManager->makeNote(tr("Document delete successfull"), Notes::NOTIFY);
+        m_noteManager->makeNote(tr("Delete completed"), Notes::NOTIFY);
     } else {
         m_noteManager->makeNote("Unkown document delete error, sorry", Notes::ERROR);
     }

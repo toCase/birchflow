@@ -1,7 +1,7 @@
 #include "m_partnerbank.h"
 
-ModelPartnerBank::ModelPartnerBank(DatabaseWorker *dbw, QObject *parent)
-    : dbWorker(dbw), QAbstractListModel{parent}
+ModelPartnerBank::ModelPartnerBank(DatabaseWorker *dbw, NotificationManager *nm, QObject *parent)
+    : dbWorker(dbw), m_notification(nm), QAbstractListModel{parent}
 {}
 
 int ModelPartnerBank::getPosition(int id)
@@ -92,8 +92,9 @@ QVariantMap ModelPartnerBank::save(QVariantMap card)
             DATA[pos] = card;
             emit dataChanged(index(pos), index(pos));
         }
+        m_notification->makeNote("Saved success", Notes::SUCCESS);
     } else {
-        qDebug() << res.value("err").toString();
+        m_notification->makeNote(res.value("err").toString(), Notes::ERROR);
     }
     return res;
 }
@@ -110,6 +111,9 @@ bool ModelPartnerBank::del(int id)
         beginRemoveRows(QModelIndex(), pos, pos);
         DATA.removeOne(pos);
         endRemoveRows();
+        m_notification->makeNote("Delete successfull", Notes::SUCCESS);
+    } else {
+        m_notification->makeNote("Unknown error while deleting, sorry", Notes::ERROR);
     }
     return res;
 }

@@ -84,7 +84,7 @@ Dialog {
             Label {
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
-                text: "Type: "
+                text: qsTr("Type: ")
                 horizontalAlignment: Qt.AlignLeft
                 verticalAlignment: Qt.AlignVCenter
             }
@@ -104,7 +104,7 @@ Dialog {
             Label {
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
-                text: "Status: "
+                text: qsTr("Status: ")
                 horizontalAlignment: Qt.AlignLeft
                 verticalAlignment: Qt.AlignVCenter
             }
@@ -125,7 +125,7 @@ Dialog {
             Label {
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
-                text: "Number: "
+                text: qsTr("Number: ")
                 horizontalAlignment: Qt.AlignLeft
                 verticalAlignment: Qt.AlignVCenter
             }
@@ -138,7 +138,7 @@ Dialog {
             Label {
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
-                text: "Date:"
+                text: qsTr("Date:")
                 horizontalAlignment: Qt.AlignLeft
                 verticalAlignment: Qt.AlignVCenter
             }
@@ -161,7 +161,7 @@ Dialog {
             Label {
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
-                text: "Partner: "
+                text: qsTr("Partner: ")
                 horizontalAlignment: Qt.AlignLeft
                 verticalAlignment: Qt.AlignVCenter
             }
@@ -184,7 +184,7 @@ Dialog {
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
 
-                text: "Valid from:"
+                text: qsTr("Valid from:")
 
                 horizontalAlignment: Qt.AlignLeft
                 verticalAlignment: Qt.AlignVCenter
@@ -201,7 +201,7 @@ Dialog {
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
 
-                text: "to:"
+                text: qsTr("to:")
 
                 horizontalAlignment: Qt.AlignLeft
                 verticalAlignment: Qt.AlignVCenter
@@ -218,7 +218,7 @@ Dialog {
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
 
-                text: "Amount:"
+                text: qsTr("Amount:")
 
                 horizontalAlignment: Qt.AlignLeft
                 verticalAlignment: Qt.AlignVCenter
@@ -257,7 +257,7 @@ Dialog {
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
 
-                text: "Description: "
+                text: qsTr("Description: ")
 
                 horizontalAlignment: Qt.AlignLeft
                 verticalAlignment: Qt.AlignVCenter
@@ -282,7 +282,7 @@ Dialog {
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
 
-                text: "File: "
+                text: qsTr("File: ")
 
                 horizontalAlignment: Qt.AlignLeft
                 verticalAlignment: Qt.AlignVCenter
@@ -303,7 +303,6 @@ Dialog {
                 onClicked: dialog_file.open()
             }
         }
-
         RowLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 46
@@ -314,16 +313,16 @@ Dialog {
 
             Button_DF {
                 Layout.fillHeight: true
-                Layout.preferredWidth: 120
+                Layout.preferredWidth: implicitWidth
 
-                icon.source: "qrc:/qt/qml/DocFlow/img/del_doc"
+                icon.source: "qrc:/qt/qml/BirchFlow/img/del_doc"
                 icon.width: 16
                 icon.height: 16
                 icon.color: Const.CLR_ICON
 
                 flat: true
 
-                text: "DELETE FILE"
+                text: qsTr("Delete file")
                 onClicked: deleteFileRequest()
 
             }
@@ -339,7 +338,7 @@ Dialog {
                 active: is_file && dia_file.text.length > 0
                 sourceComponent: Image {
                     id: file_icon
-                    source: "qrc:/qt/qml/DocFlow/img/" + dia_file.text
+                    source: "qrc:/qt/qml/BirchFlow/img/" + dia_file.text
                     fillMode: Image.PreserveAspectFit
                     mipmap: true
                     cache: false
@@ -347,22 +346,20 @@ Dialog {
             }
             Button_DF {
                 Layout.fillHeight: true
-                Layout.preferredWidth: 120
+                Layout.preferredWidth: implicitWidth
                 // Layout.topMargin: -5
                 // Layout.bottomMargin: -5
 
-                icon.source: "qrc:/qt/qml/DocFlow/img/open"
+                icon.source: "qrc:/qt/qml/BirchFlow/img/open"
                 icon.width: 16
                 icon.height: 16
                 icon.color: Const.CLR_ICON
 
                 flat: true
 
-                text: "OPEN"
+                text: qsTr("Open")
                 onClicked: modelContracts.viewDoc(dia_form.contract_id)
             }
-
-
         }
     }
 
@@ -405,73 +402,24 @@ Dialog {
         }
     }
 
-
-
-    FileDialog {
-        id: dialog_file
-        currentFolder: StandardPaths.standardLocations(StandardPaths.DocumentsLocation)[0]
-        fileMode: FileDialog.OpenFile
-        nameFilters: [
-            "All supported files (*.txt *.md *.nfo *.asc *.log *.ini *.doc *.docx *.odt *.rtf
-                                    *.pages *.wps *.sxw *.pdf *.ps *.djvu *.tex *.rtfd *.xml
-                *.json *.yaml *.yml *.csv *.xls *.xlsx *.ppt *.pptx *.epub *.fb2 *.msg *.eml)",
-            "Text (*.txt *.md *.nfo *.asc *.log *.ini)",
-            "Office (*.doc *.docx *.odt *.rtf *.pages *.wps *.sxw)",
-            "Formatted (*.pdf *.ps *.djvu *.tex *.rtfd)",
-            "Structured (*.xml *.json *.yaml *.yml *.csv)",
-            "Tables/Presentations (*.xls *.xlsx *.ppt *.pptx)",
-            "E-books/Other (*.epub *.fb2 *.msg *.eml)"
-        ]
+    FileDialog_DF {
+        id: dialog_file        
         onAccepted: {
-            dia_file.text = modelPartnerDoc.toLocalFile(selectedFile);
+            dia_file.text = modelPartnerDoc.toLocalFile(currentFile);
             if (dia_form.contract_id > 0) {
                 updateFileRequest();
             }
         }
     }
 
-    Dialog {
+    AcceptDeleteDialog {
         id: del_dialog
-        width: 400
-        height: 150
-        title: qsTr("Delete contract")
-
-        Label {
-            text: qsTr("Are you sure?")
-        }
-        footer: Item {
-            width: parent.width
-            height: 70
-            RowLayout {
-                anchors.fill: parent
-                anchors.leftMargin: 30
-                anchors.rightMargin: 30
-                anchors.topMargin: 12
-                anchors.bottomMargin: 12
-                spacing: 5
-                Button_DF{
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: 100
-                    text: qsTr("Delete")
-                    onClicked:{
-                        modelContracts.del(dia_form.contract_id)
-                        del_dialog.close()
-                        dia_form.close()
-                    }
-                }
-                Item {
-                    Layout.fillWidth: true
-                    Layout.horizontalStretchFactor: 1
-                }
-                Button_DF {
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: 100
-                    text: qsTr("Cancel")
-                    onClicked: {
-                        del_dialog.close()
-                    }
-                }
-            }
+        x: dia_form.x + 20
+        y: dia_form.y + 20
+        onAccepted: {
+            modelContracts.del(dia_form.contract_id)
+            del_dialog.close()
+            dia_form.close()
         }
     }
 }

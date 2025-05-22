@@ -21,17 +21,22 @@ DatabaseManager::DatabaseManager(QObject *parent)
     QStringList queryList;
 
     queryList.append("CREATE TABLE IF NOT EXISTS db_version (version INTEGER UNIQUE);");
+
     queryList.append("CREATE TABLE IF NOT EXISTS partners (id INTEGER PRIMARY KEY AUTOINCREMENT, "
                      "name TEXT, full_name TEXT, off_address TEXT, real_address TEXT, code TEXT, "
                      "url TEXT, note TEXT, created INTEGER);");
+
     queryList.append("CREATE TABLE IF NOT EXISTS partnerbank (id INTEGER PRIMARY KEY AUTOINCREMENT, "
                      "partner_id INTEGER, bank_name TEXT, bank_okpo TEXT, bank_mfo TEXT, bank_code TEXT, "
                      "bank_account TEXT, created INTEGER);");
+
     queryList.append("CREATE TABLE IF NOT EXISTS partnerperson (id INTEGER PRIMARY KEY AUTOINCREMENT, "
                      "partner_id INTEGER, full_name TEXT, position TEXT, phone TEXT, mail TEXT, "
                      "messenger TEXT, note TEXT, created INTEGER);");
+
     queryList.append("CREATE TABLE IF NOT EXISTS partnerdocs (id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                     "partner_id INTEGER, name TEXT, file TEXT, note TEXT, created INTEGER);");
+                     "partner_id INTEGER, name TEXT, file TEXT, note TEXT, created INTEGER, "
+                     "uuid TEXT UNIQUE);");
 
     queryList.append("CREATE TABLE IF NOT EXISTS contracts (id INTEGER PRIMARY KEY AUTOINCREMENT, "
                      "num TEXT, c_date INTEGER, partner_id INTEGER, amount DOUBLE, currency_id INTEGER, "
@@ -124,7 +129,13 @@ QList<QVariantMap> DatabaseWorker::getData(int table, const QVariantMap &filter)
     QSqlQuery query(db);
     switch (table) {
     case Tables::PARTNERS:
-        query.prepare(R"(SELECT * FROM partners)");
+        if (filter.contains("dash")) {
+            query.prepare(R"(SELECT Count(p.id) as "value" FROM partners p WHERE p.created >= ?)");
+            query.bindValue(0, filter.value("d"));
+        } else {
+            query.prepare(R"(SELECT p.*, Count(c.id) as contracts FROM partners p
+                LEFT JOIN contracts as c ON c.partner_id = p.id GROUP BY p.id)");
+        }
         break;
     case Tables::PARTNERS_BANK:
         query.prepare(R"(SELECT * FROM partnerbank WHERE (partnerbank.partner_id = ?))");
@@ -148,10 +159,20 @@ QList<QVariantMap> DatabaseWorker::getData(int table, const QVariantMap &filter)
             query.bindValue(0, Status::ABORTED);
             query.bindValue(1, filter.value("del_date"));
         } else if (filter.contains("contract_id")) {
-            query.prepare(R"(SELECT * FROM contracts WHERE contracts.id = ?)");
+            query.prepare(R"(SELECT c.*, c2.code currency, p.name partner,
+                        (SELECT a.valid_from FROM amendments a WHERE a.contract_id = c.id AND a.change_date = 1 ORDER BY a.doc_date DESC LIMIT 1) as n_valid_from,
+                        (SELECT a.valid_to FROM amendments a WHERE a.contract_id = c.id AND a.change_date = 1 ORDER BY a.doc_date DESC LIMIT 1) as n_valid_to,
+                        (SELECT a.amount FROM amendments a WHERE a.contract_id = c.id AND a.change_amount = 1 ORDER BY a.doc_date DESC LIMIT 1) as n_amount
+                        FROM contracts c
+                        INNER JOIN currency c2 ON c2.id  = c.currency_id
+                        INNER JOIN partners p ON p.id  = c.partner_id
+                        WHERE c.id = ?)");
             query.bindValue(0, filter.value("contract_id").toInt());
         } else {
-            query.prepare(R"(SELECT c.*, c2.code as "currency", p.name as "partner"
+            query.prepare(R"(SELECT c.*, c2.code as currency, p.name as partner,
+(SELECT a.valid_from FROM amendments a WHERE a.contract_id = c.id AND a.change_date = 1 ORDER BY a.doc_date DESC LIMIT 1) as n_valid_from,
+(SELECT a.valid_to FROM amendments a WHERE a.contract_id = c.id AND a.change_date = 1 ORDER BY a.doc_date DESC LIMIT 1) as n_valid_to,
+(SELECT a.amount FROM amendments a WHERE a.contract_id = c.id AND a.change_amount = 1 ORDER BY a.doc_date DESC LIMIT 1) as n_amount
                         FROM contracts c
                         INNER JOIN currency c2 ON c2.id  = c.currency_id
                         INNER JOIN partners p ON p.id  = c.partner_id)");
@@ -235,12 +256,13 @@ QVariantMap DatabaseWorker::saveData(int table, const QVariantMap& card, const Q
             query.bindValue(6, card.value("created"));
             break;
         case Tables::PARTNERS_DOC:
-            query.prepare(R"(INSERT INTO partnerdocs (partner_id, name, file, note, created) VALUES (?, ?, ?, ?, ?))");
+            query.prepare(R"(INSERT INTO partnerdocs (partner_id, name, file, note, uuid, created) VALUES (?, ?, ?, ?, ?, ?))");
             query.bindValue(0, card.value("partner_id"));
             query.bindValue(1, card.value("name"));
             query.bindValue(2, card.value("file"));
             query.bindValue(3, card.value("note"));
-            query.bindValue(4, card.value("created"));
+            query.bindValue(4, card.value("uuid"));
+            query.bindValue(5, card.value("created"));
             break;
         case Tables::CONTRACTS:
             query.prepare(R"(INSERT INTO contracts (num, c_date, partner_id, amount, currency_id,
@@ -312,7 +334,7 @@ QVariantMap DatabaseWorker::saveData(int table, const QVariantMap& card, const Q
         switch (table) {
         case Tables::PARTNERS:
             query.prepare(R"(UPDATE partners SET name = ?, full_name = ?, off_address = ?,
-                        real_address = ?, code = ?, url = ?, note = ?, created = ?
+                        real_address = ?, code = ?, url = ?, note = ?
                         WHERE partners.id = ?)");
             query.bindValue(0, card.value("name").toString());
             query.bindValue(1, card.value("full_name").toString());
@@ -321,8 +343,7 @@ QVariantMap DatabaseWorker::saveData(int table, const QVariantMap& card, const Q
             query.bindValue(4, card.value("code").toString());
             query.bindValue(5, card.value("url").toString());
             query.bindValue(6, card.value("note").toString());
-            query.bindValue(7, QDateTime::currentSecsSinceEpoch());
-            query.bindValue(8, id);
+            query.bindValue(7, id);
             break;
         case Tables::PARTNERS_BANK:
             query.prepare(R"(UPDATE partnerbank SET bank_name = ?, bank_code = ?, bank_account = ?,
@@ -345,12 +366,19 @@ QVariantMap DatabaseWorker::saveData(int table, const QVariantMap& card, const Q
             query.bindValue(6, id);
             break;
         case Tables::PARTNERS_DOC:
-            query.prepare(R"(UPDATE partnerdocs SET name = ?, note = ?, created = ?
+            if (params.contains(Params::ONLY_FILE)){
+                query.prepare(R"(UPDATE partnerdocs SET file = ?, created = ? WHERE partnerdocs.id = ?)");
+                query.bindValue(0, card.value("file"));
+                query.bindValue(1, card.value("created"));
+                query.bindValue(2, id);
+            } else {
+                query.prepare(R"(UPDATE partnerdocs SET name = ?, note = ?, created = ?
                             WHERE partnerdocs.id = ?)");
-            query.bindValue(0, card.value("name"));
-            query.bindValue(1, card.value("note"));
-            query.bindValue(2, card.value("created"));
-            query.bindValue(3, id);
+                query.bindValue(0, card.value("name"));
+                query.bindValue(1, card.value("note"));
+                query.bindValue(2, card.value("created"));
+                query.bindValue(3, id);
+            }
             break;
         case Tables::CONTRACTS:
             if (params.contains(Params::ONLY_FILE)) {
@@ -470,17 +498,36 @@ bool DatabaseWorker::delData(int table, const QVariantMap &params)
         }
     } else {
         switch (table) {
-        case Tables::PARTNERS_BANK:
-            query.prepare(R"(DELETE FROM partnerbank WHERE partnerbank.id = ?)");
+        case Tables::PARTNERS:
+            query.prepare(R"(DELETE FROM partners WHERE partners.id = ?)");
             query.bindValue(0, params.value("id"));
+            break;
+        case Tables::PARTNERS_BANK:
+            if (params.contains("partner_id")) {
+                query.prepare(R"(DELETE FROM partnerbank WHERE partnerbank.partner_id = ?)");
+                query.bindValue(0, params.value("partner_id"));
+            } else {
+                query.prepare(R"(DELETE FROM partnerbank WHERE partnerbank.id = ?)");
+                query.bindValue(0, params.value("id"));
+            }
             break;
         case Tables::PARTNERS_PERSON:
-            query.prepare(R"(DELETE FROM partnerperson WHERE partnerperson.id = ?)");
-            query.bindValue(0, params.value("id"));
+            if (params.contains("partner_id")) {
+                query.prepare(R"(DELETE FROM partnerperson WHERE partnerperson.partner_id = ?)");
+                query.bindValue(0, params.value("partner_id"));
+            } else {
+                query.prepare(R"(DELETE FROM partnerperson WHERE partnerperson.id = ?)");
+                query.bindValue(0, params.value("id"));
+            }
             break;
         case Tables::PARTNERS_DOC:
-            query.prepare(R"(DELETE FROM partnerdocs WHERE partnerdocs.id = ?)");
-            query.bindValue(0, params.value("id"));
+            if (params.contains("partner_id")) {
+                query.prepare(R"(DELETE FROM partnerdocs WHERE partnerdocs.partner_id = ?)");
+                query.bindValue(0, params.value("partner_id"));
+            } else {
+                query.prepare(R"(DELETE FROM partnerdocs WHERE partnerdocs.id = ?)");
+                query.bindValue(0, params.value("id"));
+            }
             break;
         case Tables::DOCUMENTS:
             query.prepare(R"(DELETE FROM documents WHERE documents.id = ?)");
@@ -535,5 +582,114 @@ QStringList DatabaseWorker::getContractUuids(int contract_id)
         res.append(query.value(0).toString());
     }
     return res;
+}
+
+QStringList DatabaseWorker::getPartnerUuids(int partner_id)
+{
+    QStringList res;
+    QSqlQuery query(db);
+    query.prepare(R"(SELECT pd.uuid as uuid FROM partnerdocs pd WHERE pd.partner_id = ? )");
+    query.bindValue(0, partner_id);
+    query.exec();
+    while (query.next()) {
+        res.append(query.value(0).toString());
+    }
+    return res;
+}
+
+QVariantMap DatabaseWorker::getDashData(const QString &ids, const QVariantMap &filter)
+{
+    QVariantMap result;
+
+    QSqlQuery query(db);
+    if (ids.contains("top")) {
+        query.prepare(R"(SELECT
+            (SELECT Count(p.id) FROM partners p) AS partners_count,
+            (SELECT Count(p.id) FROM partners p WHERE p.created > ?) AS partner_new,
+            (SELECT COUNT(c.id) FROM contracts c) AS contracts_count,
+            (SELECT Count(c.id) FROM contracts c WHERE  c.created > ?) AS contract_new,
+            (SELECT (SELECT Count(d.id) FROM documents d) + (SELECT Count(p.id) FROM payments p) + (SELECT Count(a.id) FROM amendments a)) AS doc_count,
+            (SELECT Count(p.id) FROM payments p) AS pay_count,
+            (SELECT
+(SELECT Count(c.id) FROM contracts c WHERE c.status != 4 AND c.file IS NULL) +
+(SELECT Count(d.id) FROM documents d INNER JOIN contracts c ON d.contract_id  = c.id WHERE c.status != 4 AND d.file IS NULL) +
+(SELECT Count(p.id) FROM payments p INNER JOIN contracts c ON p.contract_id  = c.id WHERE c.status != 4 AND p.file IS NULL) +
+(SELECT Count(a.id) FROM amendments a INNER JOIN contracts c ON a.contract_id  = c.id WHERE c.status != 4 AND a.file IS NULL)) AS file_fail)");
+        query.bindValue(0, filter.value("d"));
+        query.bindValue(1, filter.value("d"));
+    } else if (ids.contains("contracts")) {
+        if (filter.contains("type")){
+            query.prepare(R"(SELECT
+                (SELECT COUNT(c.id) FROM contracts c WHERE c.type_id = ?) AS contracts_count,
+                (SELECT Count(c.id) FROM contracts c WHERE c.type_id = ? AND c.status = 1) AS active,
+                (SELECT Count(c.id) FROM contracts c WHERE c.type_id = ? AND c.status = 3) AS completed,
+                (SELECT Count(c.id) FROM contracts c WHERE c.type_id = ? AND c.status = 2) AS aborted,
+                (SELECT Count(c.id) FROM contracts c WHERE c.type_id = ? AND c.status = 4) AS archive)");
+            query.bindValue(0, filter.value("type"));
+            query.bindValue(1, filter.value("type"));
+            query.bindValue(2, filter.value("type"));
+            query.bindValue(3, filter.value("type"));
+            query.bindValue(4, filter.value("type"));
+        } else {
+            query.prepare(R"(SELECT
+                (SELECT COUNT(c.id) FROM contracts c) AS contracts_count,
+                (SELECT Count(c.id) FROM contracts c WHERE  c.status = 1) AS active,
+                (SELECT Count(c.id) FROM contracts c WHERE  c.status = 3) AS completed,
+                (SELECT Count(c.id) FROM contracts c WHERE  c.status = 2) AS aborted,
+                (SELECT Count(c.id) FROM contracts c WHERE  c.status = 4) AS archive)");
+        }
+    }
+    query.exec();
+    while (query.next()) {
+        QSqlRecord record = query.record();
+        for (int i = 0; i < record.count(); i++){
+            result.insert(record.fieldName(i), record.value(i));
+        }
+    }
+    return result;
+}
+
+double DatabaseWorker::getPaymentSum(int from, int to, int doc_type, int currency, int contract_type)
+{
+    double result;
+    QSqlQuery query(db);
+    query.prepare(R"(SELECT SUM(p.amount * p.currency_rate) FROM payments p
+            INNER JOIN contracts c ON p.contract_id = c.id
+            WHERE p.type_id = ? AND p.status = ? AND p.currency_id = ? AND (p.doc_date BETWEEN ? AND ?) AND c.type_id = ?)");
+    query.bindValue(0, doc_type);
+    query.bindValue(1, PayStatus::PAID);
+    query.bindValue(2, currency);
+    query.bindValue(3, from);
+    query.bindValue(4, to);
+    query.bindValue(5, contract_type);
+    query.exec();
+    query.first();
+    result = query.value(0).toDouble();
+    return result;
+}
+
+QList<QVariantMap> DatabaseWorker::getPaymentCurrency(int c_date, int doc_type)
+{
+    QList<QVariantMap> result;
+    QSqlQuery query(db);
+    query.prepare(R"(SELECT p.currency_id, c.code FROM payments p
+            INNER JOIN currency c ON p.currency_id = c.id            
+            WHERE p.type_id = ? AND p.status = ? AND p.doc_date > ? GROUP BY p.currency_id)");
+    query.bindValue(0, doc_type);
+    query.bindValue(1, PayStatus::PAID);
+    query.bindValue(2, c_date);
+
+    bool r = query.exec();
+    if (r) {
+        while (query.next()) {
+            QVariantMap card;
+            QSqlRecord record = query.record();
+            for (int i = 0; i < record.count(); i++){
+                card.insert(record.fieldName(i), record.value(i));
+            }
+            result.append(card);
+        }
+    }
+    return result;
 }
 

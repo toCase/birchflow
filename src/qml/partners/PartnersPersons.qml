@@ -29,7 +29,6 @@ Item {
             form_phone.text = card.phone
             form_mail.text = card.mail
             form_messenger.text = card.messenger
-            form_created.text = "Date at: " + card.created
 
             dia_form.open();
             console.log(partner_person.person_id);
@@ -42,7 +41,7 @@ Item {
             form_phone.clear()
             form_mail.clear()
             form_messenger.clear()
-            form_created.text = ""
+            // form_created.text = ""
 
             dia_form.open();
         }
@@ -86,7 +85,7 @@ Item {
                 Layout.preferredWidth: partner_person.width / 2
                 Layout.topMargin: 5
                 Layout.bottomMargin: 5
-                placeholderText: "filter..."
+                placeholderText: qsTr("filter by name, address...")
                 onTextChanged: modelProxyPartnerPerson.setFilter(text)
             }
             Item {
@@ -96,7 +95,7 @@ Item {
                 Layout.fillHeight: true
                 Layout.preferredWidth: 80
 
-                text: "ADD"
+                text: qsTr("ADD")
                 onClicked: internal.add()
             }
         }
@@ -132,7 +131,7 @@ Item {
                     anchors.fill: parent
                     hoverEnabled: true
                     onHoveredChanged: {
-                        row.color = containsMouse ? "#4b5159" : Const.CLR_ROW
+                        row.color = containsMouse ? Const.CLR_YELLOW : Const.CLR_ROW
                     }
                     onClicked: internal.open(p_id)
                 }
@@ -196,13 +195,13 @@ Item {
                         Layout.preferredHeight: 44
                         Layout.preferredWidth: 44
 
-                        icon.source: "qrc:/qt/qml/DocFlow/img/trash"
+                        icon.source: "qrc:/qt/qml/BirchFlow/img/trash"
                         icon.width: 16
                         icon.height: 16
                         icon.color: Const.CLR_RED
 
                         onClicked: {
-                            dia_del.item_id = p_id
+                            dia_del.m_id = p_id
                             dia_del.open()
                         }
                     }
@@ -216,8 +215,8 @@ Item {
         x: partner_person.width * .2
         y: partner_person.width * .05
         width: partner_person.width - (2 * (partner_person.width * .2))
-        height: 370
-        title: "Persona"
+        height: 350
+        title: qsTr("Contact person")
 
         contentItem: ColumnLayout {
             spacing: 8
@@ -227,7 +226,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
 
-                placeholderText: "Full Name"
+                placeholderText: qsTr("Full name")
             }
 
             TextField {
@@ -235,7 +234,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
 
-                placeholderText: "Position..."
+                placeholderText: qsTr("Position")
             }
 
             RowLayout {
@@ -248,7 +247,7 @@ Item {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 40
 
-                    placeholderText: "Phone number..."
+                    placeholderText: qsTr("Phone number")
                 }
 
                 TextField {
@@ -256,7 +255,7 @@ Item {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 40
 
-                    placeholderText: "E-mail address..."
+                    placeholderText: qsTr("E-mail address")
                 }
             }
 
@@ -265,18 +264,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
 
-                placeholderText: "Messengers..."
-            }
-
-
-            Label {
-                id: form_created
-
-                Layout.fillWidth: true
-                Layout.preferredHeight: implicitHeight
-
-                font.pixelSize: Qt.application.font.pixelSize * .8
-                font.italic: true
+                placeholderText: qsTr("Messengers")
             }
         }
 
@@ -317,18 +305,10 @@ Item {
         }
     }
 
-    Dialog {
+    AcceptDeleteDialog {
         id: dia_del
         x: partner_person.width * .2
         y: partner_person.width * .05
-        width: partner_person.width - (2 * (partner_person.width * .2))
-        height: 150
-        title: "Delete"
-        standardButtons: Dialog.Ok | Dialog.Cancel
-        property int item_id: 0
-        contentItem: Label {
-            text: "Are you sure?"
-        }
-        onAccepted: internal.del(item_id)
+        onAccepted: internal.del(m_id)
     }
 }

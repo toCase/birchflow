@@ -5,6 +5,7 @@
 
 // #include "app_namespaces.h"
 #include "database.h"
+#include "notificationmanager.h"
 
 using namespace App;
 
@@ -12,7 +13,7 @@ class ModelPartnerBank : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    explicit ModelPartnerBank(DatabaseWorker *dbw, QObject *parent = nullptr);
+    explicit ModelPartnerBank(DatabaseWorker *dbw, NotificationManager *nm, QObject *parent = nullptr);
 
 
     enum RoleNames : int {
@@ -26,6 +27,7 @@ public:
 private:
 
     DatabaseWorker *dbWorker;
+    NotificationManager *m_notification;
     QList<QVariantMap> DATA;
     int PARTNER_ID = -1;
 

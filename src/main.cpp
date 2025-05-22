@@ -1,4 +1,5 @@
 #include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickStyle>
@@ -9,6 +10,8 @@
 #include "notificationmanager.h"
 #include "tcd_settings.h"
 #include "servicemanager.h"
+#include "dashmanager.h"
+#include "translatemanager.h"
 
 // models
 #include "m_partner.h"
@@ -19,6 +22,7 @@
 #include "m_currency.h"
 #include "m_contractstatus.h"
 #include "m_contractdocs.h"
+#include "m_payseries.h"
 
 // sort filter proxy models
 #include "pm_partner.h"
@@ -27,10 +31,12 @@
 #include "pm_partnerperson.h"
 #include "pm_partnerdoc.h"
 #include "pm_contracts.h"
+#include "pm_dashcontracts.h"
+
 
 int main(int argc, char *argv[])
 {
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     QQuickStyle::setStyle("Material");
     qputenv("QT_QUICK_CONTROLS_MATERIAL_VARIANT", "Dense");
@@ -56,7 +62,7 @@ int main(int argc, char *argv[])
     ModelCurrency *modelCurrency = new ModelCurrency(db_worker);
     engine.rootContext()->setContextProperty("modelCurrency", modelCurrency);
 
-    ModelPartners *modelPartners = new ModelPartners(db_worker);
+    ModelPartners *modelPartners = new ModelPartners(db_worker, noteManager, fileManager);
     engine.rootContext()->setContextProperty("modelPartners", modelPartners);
 
     PartnerProxyModel *modelProxyPartner = new PartnerProxyModel();
@@ -69,7 +75,7 @@ int main(int argc, char *argv[])
     modelPartnerCombo->sortByRole(ModelPartners::NAME);
     engine.rootContext()->setContextProperty("modelPartnerCombo", modelPartnerCombo);
 
-    ModelPartnerBank *modelPartnerBank = new ModelPartnerBank(db_worker);
+    ModelPartnerBank *modelPartnerBank = new ModelPartnerBank(db_worker, noteManager);
     engine.rootContext()->setContextProperty("modelPartnerBank", modelPartnerBank);
 
     PartnerBankProxyModel *modelProxyPartnerBank = new PartnerBankProxyModel();
@@ -77,7 +83,7 @@ int main(int argc, char *argv[])
     modelProxyPartnerBank->sortByRole(ModelPartnerBank::NAME);
     engine.rootContext()->setContextProperty("modelProxyPartnerBank", modelProxyPartnerBank);
 
-    ModelPartnerPerson *modelPartnerPerson = new ModelPartnerPerson(db_worker);
+    ModelPartnerPerson *modelPartnerPerson = new ModelPartnerPerson(db_worker, noteManager);
     engine.rootContext()->setContextProperty("modelPartnerPerson", modelPartnerPerson);
 
     PartnerPersonProxyModel *modelProxyPartnerPerson = new PartnerPersonProxyModel();
@@ -85,7 +91,7 @@ int main(int argc, char *argv[])
     modelProxyPartnerPerson->sortByRole(ModelPartnerPerson::NAME);
     engine.rootContext()->setContextProperty("modelProxyPartnerPerson", modelProxyPartnerPerson);
 
-    ModelPartnerDoc *modelPartnerDoc = new ModelPartnerDoc(db_worker, fileManager);
+    ModelPartnerDoc *modelPartnerDoc = new ModelPartnerDoc(db_worker, fileManager, noteManager);
     engine.rootContext()->setContextProperty("modelPartnerDoc", modelPartnerDoc);
 
     PartnerDocProxyModel *modelProxyPartnerDoc = new PartnerDocProxyModel();
@@ -103,9 +109,23 @@ int main(int argc, char *argv[])
     ModelContractDocs *modelContractDocs = new ModelContractDocs(db_worker, fileManager, noteManager, setting);
     engine.rootContext()->setContextProperty("modelContractDocs", modelContractDocs);
 
+    DashManager *dashManager = new DashManager(db_worker, setting);
+    engine.rootContext()->setContextProperty("dashManager", dashManager);
+
+    ModelPaymentSeries *modelPaySeries = new ModelPaymentSeries(db_worker, setting);
+    modelPaySeries->load();
+    engine.rootContext()->setContextProperty("modelPaySeries", modelPaySeries);
+
+    ProxyModelDashContracts *proxyDashContracts = new ProxyModelDashContracts(setting);
+    proxyDashContracts->setSourceModel(modelContracts);
+    engine.rootContext()->setContextProperty("proxyDashContracts", proxyDashContracts);
+
     qmlRegisterSingletonInstance("DocFlow.models", 1, 0, "StatusModel", new ModelContractStatus);
     qmlRegisterSingletonInstance("DocFlow.models", 1, 0, "TypeModel", new ModelContractType);
     qmlRegisterSingletonInstance("DocFlow.models", 1, 0, "PaymentStatusModel", new ModelPaymentStatus);
+
+    TranslateManager *trManager = new TranslateManager(&engine, setting);
+    engine.rootContext()->setContextProperty("trManager", trManager);
 
     QObject::connect(
         &engine,

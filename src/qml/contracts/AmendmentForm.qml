@@ -93,7 +93,7 @@ Dialog {
             Label {
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
-                text: "Number: "
+                text: qsTr("Number:")
                 horizontalAlignment: Qt.AlignLeft
                 verticalAlignment: Qt.AlignVCenter
             }
@@ -106,7 +106,7 @@ Dialog {
             Label {
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
-                text: "Date:"
+                text: qsTr("Date:")
                 horizontalAlignment: Qt.AlignLeft
                 verticalAlignment: Qt.AlignVCenter
             }
@@ -129,20 +129,8 @@ Dialog {
                 id: dia_change_date
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
-                text: qsTr("Change valid date")
+                text: qsTr("Change valid date from:")
             }
-
-            Label {
-                Layout.preferredWidth: implicitWidth
-                Layout.fillHeight: true
-
-                text: "from:"
-
-                horizontalAlignment: Qt.AlignLeft
-                verticalAlignment: Qt.AlignVCenter
-            }
-
-
             DateEdit_DF {
                 id: dia_valid_from
                 enabled: dia_change_date.checked
@@ -154,7 +142,7 @@ Dialog {
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
 
-                text: "to:"
+                text: qsTr("to:")
 
                 horizontalAlignment: Qt.AlignLeft
                 verticalAlignment: Qt.AlignVCenter
@@ -197,6 +185,8 @@ Dialog {
                 id: dia_currency
                 Layout.preferredWidth: 80
                 Layout.fillHeight: true
+                horizontalAlignment: Qt.AlignLeft
+                verticalAlignment: Qt.AlignVCenter
             }
             Item {
                 Layout.fillWidth: true
@@ -213,7 +203,7 @@ Dialog {
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
 
-                text: "Description: "
+                text: qsTr("Description:")
 
                 horizontalAlignment: Qt.AlignLeft
                 verticalAlignment: Qt.AlignVCenter
@@ -237,7 +227,7 @@ Dialog {
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
 
-                text: "File: "
+                text: qsTr("File:")
 
                 horizontalAlignment: Qt.AlignLeft
                 verticalAlignment: Qt.AlignVCenter
@@ -267,16 +257,16 @@ Dialog {
             spacing: 10
             Button_DF {
                 Layout.fillHeight: true
-                Layout.preferredWidth: 120
+                Layout.preferredWidth: implicitWidth
 
-                icon.source: "qrc:/qt/qml/DocFlow/img/del_doc"
+                icon.source: "qrc:/qt/qml/BirchFlow/img/del_doc"
                 icon.width: 16
                 icon.height: 16
                 icon.color: Const.CLR_ICON
 
                 flat: true
 
-                text: "DELETE FILE"
+                text: qsTr("Delete file")
                 onClicked: deleteFileRequest()
 
             }
@@ -292,7 +282,7 @@ Dialog {
                 active: root.has_file && dia_file.text.length > 0
                 sourceComponent: Image {
                     id: file_icon
-                    source: "qrc:/qt/qml/DocFlow/img/" + dia_file.text
+                    source: "qrc:/qt/qml/BirchFlow/img/" + dia_file.text
                     fillMode: Image.PreserveAspectFit
                     mipmap: true
                     cache: false
@@ -304,14 +294,14 @@ Dialog {
                 // Layout.topMargin: -5
                 // Layout.bottomMargin: -5
 
-                icon.source: "qrc:/qt/qml/DocFlow/img/open"
+                icon.source: "qrc:/qt/qml/BirchFlow/img/open"
                 icon.width: 16
                 icon.height: 16
                 icon.color: Const.CLR_ICON
 
                 flat: true
 
-                text: "OPEN"
+                text: qsTr("Open")
                 onClicked: modelContractDocs.viewDoc(doc_form.type_id, doc_form.doc_id)
             }
         }
@@ -359,23 +349,10 @@ Dialog {
         }
     }
 
-    FileDialog {
+    FileDialog_DF {
         id: dialog_file
-        currentFolder: StandardPaths.standardLocations(StandardPaths.DocumentsLocation)[0]
-        fileMode: FileDialog.OpenFile
-        nameFilters: [
-            "All supported files (*.txt *.md *.nfo *.asc *.log *.ini *.doc *.docx *.odt *.rtf
-                                    *.pages *.wps *.sxw *.pdf *.ps *.djvu *.tex *.rtfd *.xml
-                *.json *.yaml *.yml *.csv *.xls *.xlsx *.ppt *.pptx *.epub *.fb2 *.msg *.eml)",
-            "Text (*.txt *.md *.nfo *.asc *.log *.ini)",
-            "Office (*.doc *.docx *.odt *.rtf *.pages *.wps *.sxw)",
-            "Formatted (*.pdf *.ps *.djvu *.tex *.rtfd)",
-            "Structured (*.xml *.json *.yaml *.yml *.csv)",
-            "Tables/Presentations (*.xls *.xlsx *.ppt *.pptx)",
-            "E-books/Other (*.epub *.fb2 *.msg *.eml)"
-        ]
         onAccepted: {
-            dia_file.text = modelContractDocs.toLocalFile(selectedFile);
+            dia_file.text = modelContractDocs.toLocalFile(currentFile);
             if (root.doc_id > 0) {
                 updateFileRequest();
             }

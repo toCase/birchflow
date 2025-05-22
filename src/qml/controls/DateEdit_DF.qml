@@ -39,7 +39,7 @@ Item {
             Layout.preferredHeight: 44
             Layout.preferredWidth: 44
 
-            icon.source: "qrc:/qt/qml/DocFlow/img/calendar"
+            icon.source: "qrc:/qt/qml/BirchFlow/img/calendar"
             icon.width: 16
             icon.height: 16
             icon.color: Const.CLR_ICON
@@ -92,7 +92,7 @@ Item {
                     Layout.topMargin: -5
                     Layout.bottomMargin: -7
 
-                    icon.source: "qrc:/qt/qml/DocFlow/img/prev"
+                    icon.source: "qrc:/qt/qml/BirchFlow/img/prev"
                     icon.width: 16
                     icon.height: 16
                     icon.color: Const.CLR_ICON
@@ -127,7 +127,7 @@ Item {
                     Layout.topMargin: -5
                     Layout.bottomMargin: -7
 
-                    icon.source: "qrc:/qt/qml/DocFlow/img/next"
+                    icon.source: "qrc:/qt/qml/BirchFlow/img/next"
                     icon.width: 16
                     icon.height: 16
                     icon.color: Const.CLR_ICON

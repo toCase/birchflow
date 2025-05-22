@@ -96,35 +96,35 @@ void FileManager::copyAchiveFile(const QString &uuid, const QString &fname, int 
         QFile(vault_file).copy(QDir::toNativeSeparators(VAULT+ "/arch/" + fname + "." + ext_file));
         break;
     case DocTypes::AMENDMENT:
-        if (!arch_dir.exists(tr("amendments"))) arch_dir.mkdir(tr("amendments"));
+        if (!arch_dir.exists("amendments")) arch_dir.mkdir("amendments");
         QFile(vault_file).copy(QDir::toNativeSeparators(VAULT+ "/arch/amendments/" + fname + "." + ext_file));
         break;
     case DocTypes::INVOICE:
-        if (!arch_dir.exists(tr("invoices"))) arch_dir.mkdir(tr("invoices"));
+        if (!arch_dir.exists("invoices")) arch_dir.mkdir("invoices");
         QFile(vault_file).copy(QDir::toNativeSeparators(VAULT+ "/arch/invoices/" + fname + "." + ext_file));
         break;
     case DocTypes::PAYMENT:
-        if (!arch_dir.exists(tr("payments"))) arch_dir.mkdir(tr("payments"));
+        if (!arch_dir.exists("payments")) arch_dir.mkdir("payments");
         QFile(vault_file).copy(QDir::toNativeSeparators(VAULT+ "/arch/payments/" + fname + "." + ext_file));
         break;
     case DocTypes::CORRESPONDENCE:
-        if (!arch_dir.exists(tr("correspondences"))) arch_dir.mkdir(tr("correspondence"));
+        if (!arch_dir.exists("correspondence")) arch_dir.mkdir("correspondence");
         QFile(vault_file).copy(QDir::toNativeSeparators(VAULT+ "/arch/correspondence/" + fname + "." + ext_file));
         break;
     case DocTypes::ESTIMATE:
-        if (!arch_dir.exists(tr("estimates"))) arch_dir.mkdir(tr("estimates"));
+        if (!arch_dir.exists("estimates")) arch_dir.mkdir("estimates");
         QFile(vault_file).copy(QDir::toNativeSeparators(VAULT+ "/arch/estimates/" + fname + "." + ext_file));
         break;
     case DocTypes::GOODS:
-        if (!arch_dir.exists(tr("goods"))) arch_dir.mkdir(tr("goods"));
+        if (!arch_dir.exists("goods")) arch_dir.mkdir("goods");
         QFile(vault_file).copy(QDir::toNativeSeparators(VAULT+ "/arch/goods/" + fname + "." + ext_file));
         break;
     case DocTypes::ACTS:
-        if (!arch_dir.exists(tr("acts"))) arch_dir.mkdir(tr("acts"));
+        if (!arch_dir.exists("acts")) arch_dir.mkdir("acts");
         QFile(vault_file).copy(QDir::toNativeSeparators(VAULT+ "/arch/acts/" + fname + "." + ext_file));
         break;
     case DocTypes::OTHER:
-        if (!arch_dir.exists(tr("docs"))) arch_dir.mkdir(tr("docs"));
+        if (!arch_dir.exists("docs")) arch_dir.mkdir("docs");
         QFile(vault_file).copy(QDir::toNativeSeparators(VAULT+ "/arch/docs/" + fname + "." + ext_file));
         break;
     default:

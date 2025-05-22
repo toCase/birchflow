@@ -4,6 +4,8 @@
 #include <QObject>
 
 #include "database.h"
+#include "notificationmanager.h"
+#include "filemanager.h"
 
 using namespace App;
 
@@ -11,7 +13,7 @@ class ModelPartners : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    explicit ModelPartners(DatabaseWorker *dbw, QObject *parent = nullptr);
+    explicit ModelPartners(DatabaseWorker *dbw, NotificationManager *nm, FileManager *fm, QObject *parent = nullptr);
 
     enum RoleNames : int {
         ID = 0,
@@ -22,12 +24,14 @@ public:
         CODE = 5,
         URL = 6,
         NOTE = 7,
-        CREATED = 8
+        CONTRACTS = 8,
     };
 
 private:
 
     DatabaseWorker *dbWorker;
+    NotificationManager *m_notification;
+    FileManager *m_fileManager;
     QList<QVariantMap> DATA;
 
 
@@ -36,12 +40,14 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
     QHash<int, QByteArray> roleNames() const;
 
+    Q_INVOKABLE void load();
+
     Q_INVOKABLE QVariantMap add(QVariantMap card);
     Q_INVOKABLE QVariantMap save(QVariantMap card);
     Q_INVOKABLE QVariantMap getCard(int id);
+    Q_INVOKABLE bool del(int id);
 
     Q_INVOKABLE QString getInfoDoc(int id);
     Q_INVOKABLE int getPosition(int id);
-
 
 };

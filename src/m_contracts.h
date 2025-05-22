@@ -8,6 +8,7 @@
 #include "filemanager.h"
 #include "notificationmanager.h"
 #include "tcd_settings.h"
+#include "servicemanager.h"
 
 using namespace App;
 
@@ -42,12 +43,14 @@ private:
     QList<QVariantMap> DATA;
 
 
-    void load();
+
 
 public:
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
     QHash<int, QByteArray> roleNames() const;
+
+    Q_INVOKABLE void load();
 
     Q_INVOKABLE QVariantMap save(QVariantMap card);
     Q_INVOKABLE QVariantMap updateFile(QVariantMap card);
