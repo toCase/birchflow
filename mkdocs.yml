@@ -1,0 +1,23 @@
+site_name: BirchFlow Docs
+site_url: https://github.com/toCase/birchflow
+theme:
+  name: material
+  favicon: 'img/favicon.png'
+  logo: 
+  font: 
+    text: Noto Sans
+    code: JetBrains Mono
+  palette:
+    - scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Dark mode
+      primary: deep purple
+      accent: light purple
+
+    - scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Light mode
+      primary: deep purple
+      accent: light purple
