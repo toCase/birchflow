@@ -1,3 +1,12 @@
+_site/
+.sass-cache/
+.jekyll-cache/
+.bundle/
+vendor/
+.DS_Store
+*.gem
+
 BirchFlow/
 src/CMakeLists.txt.user
-site
+site/
+_docs/

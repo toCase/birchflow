@@ -101,6 +101,8 @@ Item {
                         Layout.preferredWidth: 100
 
                         text: "VISIT"
+
+                        onClicked: Qt.openUrlExternally("https://tocase.github.io/birchflow")
                     }
 
                 }
@@ -141,6 +143,7 @@ Item {
                         Layout.preferredWidth: 100
 
                         text: "ISSUE"
+                        onClicked: Qt.openUrlExternally("https://github.com/toCase/birchflow/issues");
                     }
 
                 }
@@ -181,6 +184,8 @@ Item {
                         Layout.preferredWidth: 100
 
                         text: "SUPPORT"
+
+                        onClicked: Qt.openUrlExternally("https://tocase.github.io/birchflow")
                     }
                 }
                 Item {
