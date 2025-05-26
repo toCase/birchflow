@@ -4,10 +4,12 @@ import QtQuick.Layouts
 
 ApplicationWindow {
     id: appWindow
-    width: 1200
-    height: 800
+    width: 1450
+    height: 850
     visible: true
     title: "BirchFlow"
+    minimumWidth: 1450
+    minimumHeight: 850
 
     function setSettings() {
         appSetting.setValue("app_width", appWindow.width)
@@ -18,8 +20,8 @@ ApplicationWindow {
     function loadSettings() {
         appWindow.x = appSetting.getValue("app_x", 10);
         appWindow.y = appSetting.getValue("app_y", 10);
-        appWindow.width = appSetting.getValue("app_width", 1200);
-        appWindow.height = appSetting.getValue("app_height", 800);
+        appWindow.width = appSetting.getValue("app_width", 1450);
+        appWindow.height = appSetting.getValue("app_height", 850);
     }
     Rectangle {
         anchors.fill: parent

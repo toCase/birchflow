@@ -85,7 +85,6 @@ QString ModelContracts::getInfo(int id) const
 {
     QVariantMap card = getCard(id);
     QString fname = QDir::toNativeSeparators(m_setting->getValue("vault").toString() + "/das" + card.value("uuid").toString() + ".md");
-    qDebug() << fname;
     return m_fileManager->getArchiveMarkdown(fname);
 }
 

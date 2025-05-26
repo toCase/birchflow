@@ -472,7 +472,6 @@ QVariantMap DatabaseWorker::saveData(int table, const QVariantMap& card, const Q
         res.insert("id", query.lastInsertId());
         res.insert("r", true);
     } else {
-        qDebug() << query.lastQuery();
         res.insert("err", query.lastError().text());
         res.insert("r", false);
     }
@@ -485,7 +484,6 @@ bool DatabaseWorker::delData(int table, const QVariantMap &params)
     bool res = false;
     QSqlQuery query(db);
     if (table == Tables::CONTRACTS) {
-        qDebug() << params;
         QStringList qlist;
         qlist.append(QString("DELETE FROM amendments WHERE amendments.contract_id = \"%1\";").arg(params.value("id").toInt()));
         qlist.append(QString("DELETE FROM payments WHERE payments.contract_id = \"%1\";").arg(params.value("id").toInt()));
@@ -532,19 +530,21 @@ bool DatabaseWorker::delData(int table, const QVariantMap &params)
         case Tables::DOCUMENTS:
             query.prepare(R"(DELETE FROM documents WHERE documents.id = ?)");
             query.bindValue(0, params.value("id"));
+            break;
         case Tables::PAYMENTS:
             query.prepare(R"(DELETE FROM payments WHERE payments.id = ?)");
             query.bindValue(0, params.value("id"));
+            break;
         case Tables::AMENDMENTS:
             query.prepare(R"(DELETE FROM amendments WHERE amendments.id = ?)");
             query.bindValue(0, params.value("id"));
+            break;
         default:
             break;
         }
         res = query.exec();
         if (!res) qDebug() <<"del err: "<< query.lastError().text();
     }
-
     return res;
 }
 
@@ -559,8 +559,6 @@ double DatabaseWorker::getSumPay(int type_id, int contract_id)
     if (query.exec()) {
         query.first();
         res = query.value(0).toDouble();
-    } else {
-        qDebug() << query.lastError();
     }
     return res;
 }
@@ -653,7 +651,7 @@ double DatabaseWorker::getPaymentSum(int from, int to, int doc_type, int currenc
 {
     double result;
     QSqlQuery query(db);
-    query.prepare(R"(SELECT SUM(p.amount * p.currency_rate) FROM payments p
+    query.prepare(R"(SELECT SUM(p.amount) FROM payments p
             INNER JOIN contracts c ON p.contract_id = c.id
             WHERE p.type_id = ? AND p.status = ? AND p.currency_id = ? AND (p.doc_date BETWEEN ? AND ?) AND c.type_id = ?)");
     query.bindValue(0, doc_type);

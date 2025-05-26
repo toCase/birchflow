@@ -31,7 +31,6 @@ Item {
             form_messenger.text = card.messenger
 
             dia_form.open();
-            console.log(partner_person.person_id);
         }
 
         function add() {
@@ -41,13 +40,11 @@ Item {
             form_phone.clear()
             form_mail.clear()
             form_messenger.clear()
-            // form_created.text = ""
 
             dia_form.open();
         }
 
         function save(){
-
             let card = {}
             card.id = partner_person.person_id
             card.partner_id = partner_person.partner_id
@@ -59,7 +56,6 @@ Item {
 
             let res = modelPartnerPerson.save(card)
             if (!res.r) dia_form.open()
-
         }
 
         function del(idx) {

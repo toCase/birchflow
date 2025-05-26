@@ -8,7 +8,7 @@ import "../controls"
 Item {
     id: root
     width: 20
-    height: 140
+    height: 100
 
     signal changeExpand(bool e)
     signal makeReport()
@@ -52,11 +52,11 @@ Item {
                 flat: true
 
                 icon.source: root.expanded ? "qrc:/qt/qml/BirchFlow/img/exp-up" : "qrc:/qt/qml/BirchFlow/img/exp-down"
-                icon.width: 16
-                icon.height: 16
+                icon.width: 24
+                icon.height: 24
                 icon.color: Const.CLR_ICON
                 onClicked: root.expand()
-            }
+            }/*
             Button_DF {
                 width: 44;
                 height: 44;
@@ -67,15 +67,15 @@ Item {
                 icon.height: 16
                 icon.color: Const.CLR_ICON
                 onClicked: root.makeReport()
-            }
+            }*/
             Button_DF {
                 width: 44;
                 height: 44;
                 flat: true
 
                 icon.source: "qrc:/qt/qml/BirchFlow/img/zip-file"
-                icon.width: 16
-                icon.height: 16
+                icon.width: 24
+                icon.height: 24
                 icon.color: Const.CLR_ICON
                 onClicked: root.makeZip()
             }

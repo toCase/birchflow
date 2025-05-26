@@ -45,7 +45,11 @@ void ModelPaymentSeries::load()
 
     emit currencyListUpdated();
 
-    if (m_currency == -1) setCurrency(0);
+    if (CURR.isEmpty()) {
+        setCurrency(-1);
+    } else {
+        setCurrency(0);
+    }
 }
 
 void ModelPaymentSeries::updateModel()
@@ -56,18 +60,20 @@ void ModelPaymentSeries::updateModel()
     monthList.clear();
 
     DATA.clear();
-    for (int i = 11; i >= 0; i--){
-        QDate x_date = QDate::currentDate().addMonths(-i);
-        QDate from = QDate(x_date.year(), x_date.month(), 1);
-        QDate to = QDate(x_date.year(), x_date.month(), x_date.daysInMonth());
+    if(m_currency > -1) {
+        for (int i = 11; i >= 0; i--){
+            QDate x_date = QDate::currentDate().addMonths(-i);
+            QDate from = QDate(x_date.year(), x_date.month(), 1);
+            QDate to = QDate(x_date.year(), x_date.month(), x_date.daysInMonth());
 
 
-        monthList.append(from.toString("MMM yy"));
+            monthList.append(from.toString("MMM yy"));
 
-        QVariantMap curr = CURR[m_currency];
-        double value = m_dbworker->getPaymentSum(from.toJulianDay(), to.toJulianDay(), doc_type, curr.value("currency_id").toInt(), m_contract);
+            QVariantMap curr = CURR[m_currency];
+            double value = m_dbworker->getPaymentSum(from.toJulianDay(), to.toJulianDay(), doc_type, curr.value("currency_id").toInt(), m_contract);
 
-        DATA.append(value);
+            DATA.append(value);
+        }
     }
 
     emit changeMonth(monthList);

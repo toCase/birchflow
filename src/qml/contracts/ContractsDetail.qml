@@ -39,9 +39,6 @@ Item {
 
         let expand = appSetting.getValue("doc_expand", false);
         expandTree(expand)
-
-        console.log(card.valid_from)
-
     }
 
     function expandTree(e) {
@@ -661,7 +658,6 @@ Item {
     Connections {
         target: menu
         function onChangeExpand(e) {
-            console.log("change expand", e)
             contract_detail.expandTree(e)
         }
         function onMakeZip() {            

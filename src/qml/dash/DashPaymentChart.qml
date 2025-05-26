@@ -34,7 +34,7 @@ Item {
     function load() {
         modelPaySeries.load();
         modelPaySeries.updateModel();
-        root.m_currency = modelPaySeries.currencyList();
+        // root.m_currency = modelPaySeries.currencyList();
 
     }
 
@@ -48,6 +48,9 @@ Item {
         }
         function onChangeMonth(value) {
             root.m_dates = value
+        }
+        function onCurrencyListUpdated() {
+            root.m_currency = modelPaySeries.currencyList();
         }
     }
 

@@ -19,7 +19,7 @@ Item {
         setting_dateC.checked = appSetting.getValue("dateFormat", "dd-MM-yyyy") === "dd-MM-yyyy"
         setting_dateD.checked = appSetting.getValue("dateFormat", "dd-MM-yyyy") === "dd/MM/yyyy"
         setting_lang.currentIndex = setting_lang.find(appSetting.getValue("lang", "English"));
-        setting_currency.currentIndex = appSetting.getValue("currency", 0);
+        setting_currency.currentIndex = appSetting.getValue("currency", 30);
 
         setting_archive_enable.checked = appSetting.getValue("archive_enable", true)
         setting_archive_month.realValue = appSetting.getValue("archive_month", 3)
@@ -435,7 +435,7 @@ Item {
         id: vaultDialog
         currentFolder: StandardPaths.standardLocations(StandardPaths.DocumentsLocation)[0]
         onAccepted: {
-            setting_vault.text = appSetting.toLocalDir(selectedFolder)
+            setting_vault.text = appSetting.toLocalDir(currentFolder)
             appSetting.setValue("vault", setting_vault.text);
         }
     }

@@ -261,11 +261,6 @@ void ModelContractDocs::setContract(int id)
         default:
             break;
         }
-
-        // qDebug() << documents;
-
-
-
         Section section;
         section.id = i;
         section.name = sections.at(i);

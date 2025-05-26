@@ -23,21 +23,6 @@ Item {
         id: internal
 
         function open(idx) {
-            // partner_doc.doc_id = idx
-            // let card = modelPartnerDoc.getCard(idx);
-            // form_name.text = card.name
-            // form_file.text = card.file
-            // form_note.text = card.note
-            // form_created.text = "Date at: " + card.created
-
-            // row_file.visible = false
-            // but_open.visible = true
-
-            // dia_form.open();
-            // console.log(partner_doc.doc_id);
-
-            // ///
-
             let card = modelPartnerDoc.getCard(idx);
             doc_dialog.doc_id = idx;
             doc_dialog.partner_id = partner_doc.partner_id;
