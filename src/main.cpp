@@ -46,7 +46,11 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    TCD_Settings *setting = new TCD_Settings("config.json");
+    QDir appDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    if (!appDir.exists()) QDir().mkdir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    QString setting_file = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/config.json";
+
+    TCD_Settings *setting = new TCD_Settings(setting_file);
     engine.rootContext()->setContextProperty("appSetting", setting);
 
     DatabaseManager manager;

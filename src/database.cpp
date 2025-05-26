@@ -10,7 +10,11 @@ DatabaseManager::DatabaseManager(QObject *parent)
 
     VERSION = 1;
 
-    QString db_file = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/db.db3");
+    QDir appDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    if (!appDir.exists()) QDir().mkdir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    QString db_file = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/birchflow.db3";
+    qDebug() << db_file;
+
 
     db = QSqlDatabase::addDatabase("QSQLITE", "mng");
     db.setDatabaseName(db_file);
@@ -110,7 +114,9 @@ void DatabaseManager::changeDB(int db_version, int current_version)
 
 DatabaseWorker::DatabaseWorker(QObject *parent)
 {
-    QString db_file = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/db.db3");
+    QDir appDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    if (!appDir.exists()) QDir().mkdir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    QString db_file = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/birchflow.db3";
 
     db = QSqlDatabase::addDatabase("QSQLITE", "app");
     db.setDatabaseName(db_file);

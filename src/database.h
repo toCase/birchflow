@@ -8,6 +8,7 @@
 #include <QDir>
 #include <QCoreApplication>
 #include <QDateTime>
+#include <QStandardPaths>
 
 #include "app_namespaces.h"
 
