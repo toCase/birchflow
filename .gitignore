@@ -10,3 +10,7 @@ BirchFlow/
 src/CMakeLists.txt.user
 site/
 _docs/
+
+flatpak/
+.flatpak-builder/
+flatpak-build/
