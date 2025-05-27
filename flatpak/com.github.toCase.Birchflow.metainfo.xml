@@ -1,16 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
   <id>com.github.toCase.Birchflow</id>
+  <metadata_license>FSFAP</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
   <name>Birchflow</name>
   <summary>Document and contract management system</summary>
   <description>
-    <p>Birchflow is a document and contract management system with tree-structured navigation, version control, and customizable views.</p>
+    <p><b>BirchFlow</b> is a document management application designed to help you organize and track your contracts, counterparties, and related documents.</p>
+    <p>With BirchFlow, you can:</p>
+    <ul>
+      <li>Group documents by linking them to specific contracts</li>
+      <li>Track deadlines and financial obligations</li>
+      <li>Archive documents once collaboration is complete</li>
+    </ul>
+    <p>BirchFlow is an invaluable tool for entrepreneurs, accountants, legal professionals, administrators—anyone who works with contracts and supporting files.</p>
   </description>
+  <keywords>
+    <keyword>documents</keyword>
+    <keyword>contracts</keyword>
+    <keyword>management</keyword>
+    <keyword>archive</keyword>
+    <keyword>organization</keyword>
+  </keywords>
   <url type="homepage">https://github.com/toCase/birchflow</url>
   <url type="bugtracker">https://github.com/toCase/birchflow/issues</url>
   <url type="donation">https://github.com/toCase/birchflow</url>
-  <developer_name>toCase</developer_name>
+  <developer_name>toCase</developer_name>  
   <content_rating type="oars-1.1"/>
+  <launchable type="desktop-id">com.github.toCase.Birchflow.desktop</launchable>
   <releases>
     <release version="1.0.1" date="2025-05-26">
       <description>Initial release of Birchflow.</description>

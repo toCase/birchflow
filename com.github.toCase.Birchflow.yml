@@ -20,6 +20,6 @@ modules:
         url: https://github.com/toCase/birchflow.git
         branch: main
     post-install:
-      - install -Dm644 flatpak/com.github.toCase.Birchflow.png /app/share/icons/hicolor/256x256/apps/com.github.toCase.Birchflow.png
-      - install -Dm644 flatpak/com.github.toCase.Birchflow.desktop /app/share/applications/com.github.toCase.Birchflow.desktop
-      - install -Dm644 flatpak/com.github.toCase.Birchflow.metainfo.xml /app/share/metainfo/com.github.toCase.Birchflow.metainfo.xml
+      - install -Dm644 ../flatpak/com.github.toCase.Birchflow.png /app/share/icons/hicolor/256x256/apps/com.github.toCase.Birchflow.png
+      - install -Dm644 ../flatpak/com.github.toCase.Birchflow.desktop /app/share/applications/com.github.toCase.Birchflow.desktop
+      - install -Dm644 ../flatpak/com.github.toCase.Birchflow.metainfo.xml /app/share/metainfo/com.github.toCase.Birchflow.metainfo.xml
