@@ -13,7 +13,6 @@ DatabaseManager::DatabaseManager(QObject *parent)
     QDir appDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
     if (!appDir.exists()) QDir().mkdir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
     QString db_file = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/birchflow.db3";
-    qDebug() << db_file;
 
 
     db = QSqlDatabase::addDatabase("QSQLITE", "mng");

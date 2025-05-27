@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Birchflow
+Comment=Document management system with a tree structure (contracts and documents)
+Exec=appBirchFlow
+Icon=com.github.toCase.Birchflow
+Terminal=false
+Type=Application
+Categories=Office;Productivity;
