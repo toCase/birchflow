@@ -15,6 +15,10 @@
     </ul>
     <p>BirchFlow is an invaluable tool for entrepreneurs, accountants, legal professionals, administrators—anyone who works with contracts and supporting files.</p>
   </description>
+  <categories>
+    <category>Office</category>
+    <category>Finance</category>
+  </categories>
   <keywords>
     <keyword>documents</keyword>
     <keyword>contracts</keyword>
@@ -30,7 +34,7 @@
   <launchable type="desktop-id">io.github.toCase.Birchflow.desktop</launchable>
   <releases>
     <release version="1.0.1" date="2025-05-26">
-      <description>Initial release of Birchflow.</description>
+      <description>Initial release of Birchflow</description>
     </release>
   </releases>
   <screenshots>
