@@ -6,7 +6,7 @@
   <name>Birchflow</name>
   <summary>Document and contract management system</summary>
   <description>
-    <p><b>BirchFlow</b> is a document management application designed to help you organize and track your contracts, counterparties, and related documents.</p>
+    <p>BirchFlow is a document management application designed to help you organize and track your contracts, counterparties, and related documents.</p>
     <p>With BirchFlow, you can:</p>
     <ul>
       <li>Group documents by linking them to specific contracts</li>
@@ -29,7 +29,9 @@
   <url type="homepage">https://github.com/toCase/birchflow</url>
   <url type="bugtracker">https://github.com/toCase/birchflow/issues</url>
   <url type="donation">https://github.com/toCase/birchflow</url>
-  <developer_name>toCase</developer_name>  
+  <developer id="io.github">
+    <name>Evgen Shevchenko</name>
+</developer>  
   <content_rating type="oars-1.1"/>
   <launchable type="desktop-id">io.github.toCase.Birchflow.desktop</launchable>
   <releases>

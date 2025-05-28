@@ -1,17 +1,18 @@
 app-id: io.github.toCase.Birchflow
 runtime: org.kde.Platform
-runtime-version: '6.8'
+runtime-version: '6.9'
 sdk: org.kde.Sdk
 command: appBirchFlow
+  # - --socket=wayland + fallback-x11
 finish-args:
-  - --filesystem=home
-  - --socket=x11
-  - --socket=wayland
   - --device=dri
   - --share=ipc
+  - --socket=x11
+  - --share=network
+  - --filesystem=home
 modules:
   - name: birchflow
-    buildsystem: cmake
+    buildsystem: cmake-ninja
     subdir: src
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
