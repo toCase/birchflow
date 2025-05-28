@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.toCase.Birchflow</id>
+  <metadata_license>FSFAP</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Birchflow</name>
+  <summary>Document and contract management system</summary>
+  <description>
+    <p><b>BirchFlow</b> is a document management application designed to help you organize and track your contracts, counterparties, and related documents.</p>
+    <p>With BirchFlow, you can:</p>
+    <ul>
+      <li>Group documents by linking them to specific contracts</li>
+      <li>Track deadlines and financial obligations</li>
+      <li>Archive documents once collaboration is complete</li>
+    </ul>
+    <p>BirchFlow is an invaluable tool for entrepreneurs, accountants, legal professionals, administrators—anyone who works with contracts and supporting files.</p>
+  </description>
+  <keywords>
+    <keyword>documents</keyword>
+    <keyword>contracts</keyword>
+    <keyword>management</keyword>
+    <keyword>archive</keyword>
+    <keyword>organization</keyword>
+  </keywords>
+  <url type="homepage">https://github.com/toCase/birchflow</url>
+  <url type="bugtracker">https://github.com/toCase/birchflow/issues</url>
+  <url type="donation">https://github.com/toCase/birchflow</url>
+  <developer_name>toCase</developer_name>  
+  <content_rating type="oars-1.1"/>
+  <launchable type="desktop-id">io.github.toCase.Birchflow.desktop</launchable>
+  <releases>
+    <release version="1.0.1" date="2025-05-26">
+      <description>Initial release of Birchflow.</description>
+    </release>
+  </releases>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Main window</caption>
+      <image>https://raw.githubusercontent.com/toCase/birchflow/main/screenshots/main.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Partners</caption>
+      <image>https://raw.githubusercontent.com/toCase/birchflow/main/screenshots/partners.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Contracts</caption>
+      <image>https://raw.githubusercontent.com/toCase/birchflow/main/screenshots/contracts.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Detail</caption>
+      <image>https://raw.githubusercontent.com/toCase/birchflow/main/screenshots/detail.png</image>
+    </screenshot>
+  </screenshots>
+</component>

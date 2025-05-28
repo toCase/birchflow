@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Birchflow
+Comment=Document management application designed to help you organize and track your contracts, counterparties, and related documents.
+Exec=appBirchFlow
+Icon=io.github.toCase.Birchflow
+Terminal=false
+Type=Application
+Categories=Office;Productivity;
