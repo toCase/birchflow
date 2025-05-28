@@ -12,4 +12,6 @@ site/
 _docs/
 
 .flatpak-builder/
+repo/
+builddir/
 flatpak-build/
