@@ -3,7 +3,6 @@ runtime: org.kde.Platform
 runtime-version: '6.9'
 sdk: org.kde.Sdk
 command: appBirchFlow
-  # - --socket=wayland + fallback-x11
 finish-args:
   - --device=dri
   - --share=ipc
@@ -19,4 +18,4 @@ modules:
     sources:
       - type: archive
         url: https://github.com/toCase/birchflow/archive/refs/tags/v1.0.0.tar.gz
-        sha256: 41ed5d9f7b59415efe92e27156744d0d25aba8cb53354a0d26088fac497e85d5
+        sha256: 0c6c6d4d587efdd3ae7a16aaca6cad342ac7c073c747149143a774544493b08f
