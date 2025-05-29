@@ -11,6 +11,7 @@ ApplicationWindow {
     minimumWidth: 1450
     minimumHeight: 850
 
+
     function setSettings() {
         appSetting.setValue("app_width", appWindow.width)
         appSetting.setValue("app_height", appWindow.height)

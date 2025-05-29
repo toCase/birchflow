@@ -17,6 +17,6 @@ modules:
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
     sources:
-      - type: git
-        url: https://github.com/toCase/birchflow.git
-        branch: main
+      - type: archive
+        url: https://github.com/toCase/birchflow/archive/refs/tags/v1.0.0.tar.gz
+        sha256: 41ed5d9f7b59415efe92e27156744d0d25aba8cb53354a0d26088fac497e85d5

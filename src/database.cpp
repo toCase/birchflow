@@ -5,7 +5,6 @@ DatabaseManager::DatabaseManager(QObject *parent)
 {
     /*
      * VERSION - main parameter
-     *
      */
 
     VERSION = 1;

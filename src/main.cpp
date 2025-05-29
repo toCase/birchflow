@@ -4,6 +4,8 @@
 #include <QQmlContext>
 #include <QQuickStyle>
 
+#include <QIcon>
+
 // managers
 #include "database.h"
 #include "filemanager.h"
@@ -37,6 +39,7 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    app.setWindowIcon(QIcon(":/img/app_icon.png"));
 
     QQuickStyle::setStyle("Material");
     qputenv("QT_QUICK_CONTROLS_MATERIAL_VARIANT", "Dense");

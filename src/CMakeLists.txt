@@ -99,6 +99,10 @@ qt_add_resources(appBirchFlow "configuration"
     FILES
     qtquickcontrols2.conf
 )
+qt_add_resources(appBirchFlow "resources"
+    PREFIX "/"
+    FILES img/app_icon.png
+)
 
 target_link_libraries(appBirchFlow
     PRIVATE Qt6::Quick
