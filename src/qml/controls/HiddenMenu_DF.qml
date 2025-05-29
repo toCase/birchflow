@@ -38,7 +38,7 @@ Item {
         height: root.height
         color: Const.CLR_ROW
 
-        // bottomRightRadius: 5
+        bottomRightRadius: 5
 
         Column {
             visible: root.isOpen
@@ -90,8 +90,8 @@ Item {
         color: Const.CLR_YELLOW
         // radius: 5
 
-        // topRightRadius: 5
-        // bottomRightRadius: 5
+        topRightRadius: 5
+        bottomRightRadius: 5
 
         Label {
             anchors.centerIn: parent

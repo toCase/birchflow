@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick QuickControls2 Sql Charts)
 
-qt_standard_project_setup(REQUIRES 6.6)
+qt_standard_project_setup(REQUIRES 6.8)
 
 qt_add_executable(appBirchFlow
     main.cpp
@@ -113,3 +113,11 @@ install(TARGETS appBirchFlow
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+set(REPO_ROOT_DIR ${CMAKE_SOURCE_DIR}/..)
+install(FILES ${REPO_ROOT_DIR}/flatpak/io.github.toCase.Birchflow.svg
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps)
+install(FILES ${REPO_ROOT_DIR}/flatpak/io.github.toCase.Birchflow.desktop
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+install(FILES ${REPO_ROOT_DIR}/flatpak/io.github.toCase.Birchflow.metainfo.xml
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo)

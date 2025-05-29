@@ -20,7 +20,3 @@ modules:
       - type: git
         url: https://github.com/toCase/birchflow.git
         branch: main
-    post-install:
-      - install -Dm644 ../flatpak/io.github.toCase.Birchflow.svg /app/share/icons/hicolor/scalable/apps/io.github.toCase.Birchflow.svg
-      - install -Dm644 ../flatpak/io.github.toCase.Birchflow.desktop /app/share/applications/io.github.toCase.Birchflow.desktop
-      - install -Dm644 ../flatpak/io.github.toCase.Birchflow.metainfo.xml /app/share/metainfo/io.github.toCase.Birchflow.metainfo.xml
