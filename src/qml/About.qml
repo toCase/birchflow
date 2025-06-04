@@ -44,7 +44,7 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: implicitHeight
 
-            text: "version 1.0.2"
+            text: "version 1.0.1"
 
             horizontalAlignment: Qt.AlignHCenter
             verticalAlignment: Qt.AlignVCenter
