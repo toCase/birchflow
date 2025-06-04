@@ -11,7 +11,7 @@ Item {
     id: setting
 
     function load() {
-        setting_vault.text = appSetting.getValue("vault", "");
+        // setting_vault.text = appSetting.getValue("vault", "");
         setting_payment.checked = appSetting.getValue("calcPay", "payment") === "payment"
         setting_invoice.checked = appSetting.getValue("calcPay", "payment") === "invoice"
         setting_dateA.checked = appSetting.getValue("dateFormat", "dd-MM-yyyy") === "dd.MM.yyyy"
@@ -43,6 +43,7 @@ Item {
 
             spacing: 30
 
+            /*
             Page {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 90
@@ -90,6 +91,7 @@ Item {
                     }
                 }
             }
+*/
             Page {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 90

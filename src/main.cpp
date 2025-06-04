@@ -53,7 +53,13 @@ int main(int argc, char *argv[])
     if (!appDir.exists()) QDir().mkdir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
     QString setting_file = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/config.json";
 
+    QDir vault_dir = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/vault");
+    if (!vault_dir.exists()) {
+        QDir().mkdir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/vault");
+    }
+
     TCD_Settings *setting = new TCD_Settings(setting_file);
+    setting->setValue("vault", vault_dir.absolutePath());
     engine.rootContext()->setContextProperty("appSetting", setting);
 
     DatabaseManager manager;

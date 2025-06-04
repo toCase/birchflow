@@ -5,9 +5,12 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
-#include <QProcess>
+// #include <QProcess>
 #include <QDesktopServices>
 #include <QCryptographicHash>
+
+#include "JlCompress.h"
+
 #include "tcd_settings.h"
 #include "app_namespaces.h"
 

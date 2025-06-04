@@ -154,6 +154,7 @@ QString FileManager::getMD5(const QString &fileName)
 void FileManager::saveArchiveDir(const QString &zip_file)
 {
 
+    /*
     QDir vault_dir(QDir::toNativeSeparators(VAULT));
     QStringList args;
     args << "-r" << zip_file << "arch";
@@ -167,6 +168,22 @@ void FileManager::saveArchiveDir(const QString &zip_file)
 
     QDir arch_dir = QDir::toNativeSeparators(VAULT+ "/arch");
     arch_dir.removeRecursively();
+    */
+    QDir vault_dir(VAULT);
+    QString arch_path = vault_dir.filePath("arch");
+
+    if (!QDir(arch_path).exists()){
+        qDebug() << "arch folder is not exists";
+        return;
+    }
+
+    bool ok = JlCompress::compressDir(zip_file, arch_path);
+    if (!ok) { qWarning() << "Error during making arch: " << zip_file; }
+
+    QDir arch_dir(arch_path);
+    if (!arch_dir.removeRecursively()) {
+        qWarning() << "Error can't remove dir " << arch_path;
+    }
 }
 
 QString FileManager::getArchiveMarkdown(const QString &arch_file)

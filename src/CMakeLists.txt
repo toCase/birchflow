@@ -3,8 +3,10 @@ cmake_minimum_required(VERSION 3.16)
 project(BirchFlow VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# set(CMAKE_PREFIX_PATH "/usr/local")
 
 find_package(Qt6 REQUIRED COMPONENTS Quick QuickControls2 Sql Charts)
+find_package(QuaZip-Qt6 REQUIRED)
 
 qt_standard_project_setup(REQUIRES 6.8)
 
@@ -109,6 +111,7 @@ target_link_libraries(appBirchFlow
     PRIVATE Qt6::QuickControls2
     PRIVATE Qt6::Sql
     PRIVATE Qt6::Charts
+    PRIVATE QuaZip::QuaZip
 )
 
 include(GNUInstallDirs)

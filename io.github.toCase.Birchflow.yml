@@ -6,8 +6,17 @@ command: appBirchFlow
 finish-args:
   - --device=dri
   - --share=ipc
-  - --socket=x11
+  - --socket=wayland
+  - --socket=fallback-x11
 modules:
+  - name: quazip
+    buildsystem: cmake-ninja
+    subdir: src
+    sources:
+      - type: archive
+        url: https://github.com/stachenov/quazip/archive/refs/tags/v1.5.zip
+        sha256: 4b7ffa599fe376465ce43d7f948b9223c68fd66f3287150ac9d5feef045a43a1
+
   - name: birchflow
     buildsystem: cmake-ninja
     subdir: src
